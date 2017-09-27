@@ -1,5 +1,9 @@
 public class DesCartesianPlane{
-	private String[][] plane = new String[100][100];
+	private int x;
+	private int y;
 
+	private int[] position = new int[1];
+
+	
 
 }
