@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1155.robot;
 
-public class DesCartesianPlane{
+public class ClockworkOrange{
 	private int x;
 	private int y;
 
