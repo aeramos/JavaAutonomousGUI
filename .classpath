@@ -4,7 +4,7 @@
 	<classpathentry kind="var" path="wpilib" sourcepath="wpilib.sources"/>
 	<classpathentry kind="var" path="networktables" sourcepath="networktables.sources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/karun/wpilib/user/java/lib/flanagan.jar"/>
-	<classpathentry kind="lib" path="C:/Users/karun/wpilib/user/java/lib/CTRLib.jar"/>
+	<classpathentry kind="var" path="flanagan"/>
+	<classpathentry kind="var" path="CTRLib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
