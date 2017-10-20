@@ -27,6 +27,7 @@ public class Robot extends IterativeRobot {
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
 	ClockworkOrange theWatchmen;
+	DesCartesianPlane René;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -39,6 +40,7 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		theWatchmen = new ClockworkOrange();
+		René = new DesCartesianPlane(theWatchmen);
 	}
 
 	/**
@@ -69,7 +71,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		theWatchmen.setStartTime();
+		René.theWatchmen.setStartTime();
 		autonomousCommand = chooser.getSelected();
 
 		/*
@@ -90,7 +92,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		System.out.println(theWatchmen.getTimeDifference());
+		System.out.println(René.theWatchmen.getTimeDifference());
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		System.out.println(theWatchmen.getTimeDifference());
+		System.out.println(René.theWatchmen.getTimeDifference());
 	}
 
 	/**
