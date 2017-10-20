@@ -1,6 +1,11 @@
 
 package org.usfirst.frc.team1155.robot;
 
+import edu.wpi.first.wpilibj.ADXL345_I2C;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -28,6 +33,8 @@ public class Robot extends IterativeRobot {
 
 	ClockworkOrange theWatchmen;
 	DesCartesianPlane René;
+	ADXRS450_Gyro chicken;
+	ADXL345_I2C excel;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -40,7 +47,9 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		theWatchmen = new ClockworkOrange();
-		René = new DesCartesianPlane(theWatchmen);
+		chicken = new ADXRS450_Gyro(SPI.Port.kMXP); //Change Later
+		excel = new ADXL345_I2C(I2C.Port.kOnboard, Accelerometer.Range.k16G); //Change Later
+		René = new DesCartesianPlane(theWatchmen, chicken, excel);
 	}
 
 	/**
