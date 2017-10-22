@@ -60,7 +60,7 @@ public class DesCartesianPlane{
 		if (yDistance >= 0) {
 			return Math.toDegrees(Math.asin(xDistance/radius));
 		} else {
-			return Math.toDegrees(90 + Math.asin(yDistance/radius));
+			return 90 + Math.toDegrees(Math.asin(yDistance/radius));
 		}
 	}
 }
