@@ -63,4 +63,12 @@ public class DesCartesianPlane{
 			return 90 + Math.toDegrees(Math.asin(yDistance/radius));
 		}
 	}
+	
+	public double getUsefulAngle() {
+		if (chicken.getAngle() > 180) {
+			return -(360 - chicken.getAngle());
+		} else {
+			return chicken.getAngle();
+		}
+	}
 }

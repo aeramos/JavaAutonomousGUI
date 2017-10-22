@@ -33,14 +33,16 @@ public class GlobalPositioningSubsystem extends Subsystem{
 	public void goSomewhere(Location location) {
 		if (location == Location.Gear) {
 			while (Robot.René.getX() != 10.00 && Robot.René.getY() != 10.00) {
-				if (Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(), Robot.René.getY(), 10.0, 10.0)) != Robot.René.chicken.getAngle()) {
-					if (Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(),Robot.René.getY(), 10.0, 10.0)) >= 180) {
-						while (180 - Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(),Robot.René.getY(), 10.0, 10.0)) != Robot.René.chicken.getAngle()) {
+				double distanceBetweenLocations = Robot.René.distanceBetweenPoints(Robot.René.getX(), Robot.René.getY(), 10.0, 10.0);
+				double angleWeNeedToBeAt = Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), distanceBetweenLocations);
+				if (angleWeNeedToBeAt != Robot.René.chicken.getAngle()) {
+					if (angleWeNeedToBeAt >= 180) {
+						while (angleWeNeedToBeAt != Robot.René.getUsefulAngle()) {
 							frontRightMotor.set(1);
 							backRightMotor.set(1);
 						}
 					} else {
-						while (Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(),Robot.René.getY(), 10.0, 10.0)) != Robot.René.chicken.getAngle()) {
+						while (angleWeNeedToBeAt != Robot.René.getUsefulAngle()) {
 							frontLeftMotor.set(1);
 							backLeftMotor.set(1);
 					} 
