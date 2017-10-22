@@ -31,10 +31,10 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
-	ClockworkOrange theWatchmen;
-	DesCartesianPlane René;
-	ADXRS450_Gyro chicken;
-	ADXL345_I2C excel;
+	public static DesCartesianPlane René;
+	private ClockworkOrange theWatchmen;
+	private ADXRS450_Gyro chicken;
+	private ADXL345_I2C excel;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
