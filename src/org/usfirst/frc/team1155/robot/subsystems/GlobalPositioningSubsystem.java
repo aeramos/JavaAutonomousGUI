@@ -33,119 +33,32 @@ public class GlobalPositioningSubsystem extends Subsystem{
 	public void goSomewhere(Location location) {
 		if (location == Location.Gear) {
 			while (Robot.René.getX() != 10.00 && Robot.René.getY() != 10.00) {
-				if (Robot.René.getX() > 10.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getX() < 10.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does nothing as it would be in the same place
-				}
-				if (Robot.René.getY() > 10.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getY() < 10.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does Nothing as it would be in the same place
+				if (Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(), Robot.René.getY(), 10.0, 10.0)) != Robot.René.chicken.getAngle()) {
+					if (Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(),Robot.René.getY(), 10.0, 10.0)) >= 180) {
+						while (180 - Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(),Robot.René.getY(), 10.0, 10.0)) != Robot.René.chicken.getAngle()) {
+							frontRightMotor.set(1);
+							backRightMotor.set(1);
+						}
+					} else {
+						while (Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), Robot.René.distanceBetweenPoints(Robot.René.getX(),Robot.René.getY(), 10.0, 10.0)) != Robot.René.chicken.getAngle()) {
+							frontLeftMotor.set(1);
+							backLeftMotor.set(1);
+					} 
 				}
 			}
-		} else if (location == Location.Airship) {
+		} 
+	}
+		else if (location == Location.Airship) {
 			while (Robot.René.getX() != 5.00 && Robot.René.getY() != 5.00) {
-				if (Robot.René.getX() > 5.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getX() < 10.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does nothing as it would be in the same place
-				}
-				if (Robot.René.getY() > 5.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getY() < 10.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does Nothing as it would be in the same place
-				}	
+			
 			}
 		} else if (location == Location.StartingPos) {
-			while (Robot.René.getX() != 0.00 && Robot.René.getY() != 0.00) {
-				if (Robot.René.getX() > 0.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getX() < 0.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does nothing as it would be in the same place
-				}
-				if (Robot.René.getY() > 0.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getY() < 0.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does Nothing as it would be in the same place
-				}				
+			while (Robot.René.getX() != 0.00 && Robot.René.getY() != 0.00) {				
+			
 			}
 		} else {
 			while (Robot.René.getX() != 0.00 && Robot.René.getY() != 0.00) {
-				if (Robot.René.getX() > 0.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getX() < 0.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does nothing as it would be in the same place
-				}
-				if (Robot.René.getY() > 0.00) {
-					frontLeftMotor.set(-1.0);
-					frontRightMotor.set(-1.0);
-					backLeftMotor.set(-1.0);
-					backRightMotor.set(-1.0);
-				} else if (Robot.René.getY() < 0.00) {
-					frontLeftMotor.set(1.0);
-					frontRightMotor.set(1.0);
-					backLeftMotor.set(1.0);
-					backRightMotor.set(1.0);
-				} else {
-					//Does Nothing as it would be in the same place
-				}	
+			
 			}
 		}
 	}

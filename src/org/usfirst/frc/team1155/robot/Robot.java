@@ -33,7 +33,7 @@ public class Robot extends IterativeRobot {
 
 	public static DesCartesianPlane René;
 	private ClockworkOrange theWatchmen;
-	private ADXRS450_Gyro chicken;
+	ADXRS450_Gyro chicken;
 	private ADXL345_I2C excel;
 	
 	/**
