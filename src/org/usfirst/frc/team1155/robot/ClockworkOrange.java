@@ -14,6 +14,11 @@ public class ClockworkOrange{
 		previousTime = startTime;
 		System.out.println("Start Time " + startTime);
 	}
+
+	public double getStartTime(){
+		return startTime;
+	}
+
 	
 	public double getPreviousTime() {
 		if (currentTime != 0.0) {
