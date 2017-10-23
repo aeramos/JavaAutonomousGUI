@@ -19,15 +19,13 @@ public class DesCartesianPlane{
 		chicken = halal;
 		excel = sheets;
 	}
-	
-	public void setX(double set) {
-		x = set;
+	public void doesTheMath() {
+		double xDist = 0;
+		double yDist = 0;
+		for(int i = theWatchmen.getStartTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference){
+			
+		}		
 	}
-	
-	public void setY(double set) {
-		y = set;
-	}
-	
 	public double getX() {
 		return x;
 	}
@@ -36,9 +34,7 @@ public class DesCartesianPlane{
 		return y;
 	}
 		
-	public void doesTheMath() {
-		//Does the math cough cough bowen
-	}
+	
 	
 	public double getVelocity() {
 		return velocity; //Shouldn't be needed, mostly for testing
@@ -49,7 +45,7 @@ public class DesCartesianPlane{
 	}
 	
 	public double distanceBetweenPoints(double x1, double y1, double x2, double y2) {
-		return Math.hypot(x2 - x1, y2 - y1);
+		return Math.hypot(x2 - x1, y2 - y1);//bowen is sus
 	}
 	
 	public double distanceBetweenCoords(double x1y1, double x2y2) {
