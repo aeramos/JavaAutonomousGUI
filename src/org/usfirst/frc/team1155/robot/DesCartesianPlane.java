@@ -20,11 +20,29 @@ public class DesCartesianPlane{
 		excel = sheets;
 	}
 	public void doesTheMath() {
-		double xDist = 0;
-		double yDist = 0;
+		x = 0;
+		y = 0;
+		double xVelocity = 0;
+		double yVelocity = 0;
+		double preVelocityX = 0;
+		double preVelocityY = 0;
+		double prevAccelX = 0;
+		double prevAccelY = 0;
+		double currentXaccel = excel.getX;
+		double currentYaccel = excel.getY;
+
 		for(int i = theWatchmen.getStartTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference){
-			
-		}		
+			xVelocity += 0.5 * i * (prevAccelX + currentXaccel);
+			yVelocity += 0.5 * i * (prevAccelY + currentYaccel);
+			prevAccelX = currentXaccel;
+			prevAccelY = currentYaccel;
+		}
+		for(int i = theWatchmen.getStartTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference){
+			x += 0.5 * i * (preVelocityX + xVelocity);
+			y += 0.5 * i * (preVelocityY + yVelocity);
+			preVelocityX = xVelocity;
+			preVelocityY = yVelocity;
+		}
 	}
 	public double getX() {
 		return x;
