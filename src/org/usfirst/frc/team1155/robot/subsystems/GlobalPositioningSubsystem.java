@@ -13,6 +13,12 @@ public class GlobalPositioningSubsystem extends Subsystem{
 	
 	public static Location place;
 	public CANTalon frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
+	public double gearX = 10.00;
+	public double gearY = 10.00;
+	public double airshipX = 5.00;
+	public double airshipY = 5.00;
+	public double startingPosX = 0.00;
+	public double startingPosY = 0.00;
 	
 	public GlobalPositioningSubsystem() {
 		frontLeftMotor = new CANTalon(PortMap.FRONT_LEFT_TALON);
@@ -32,9 +38,9 @@ public class GlobalPositioningSubsystem extends Subsystem{
 	
 	public void goSomewhere(Location location) {
 		if (location == Location.Gear) {
-			while (Robot.René.getX() != 10.00 && Robot.René.getY() != 10.00) {
-				double distanceBetweenLocations = Robot.René.distanceBetweenPoints(Robot.René.getX(), Robot.René.getY(), 10.0, 10.0);
-				double angleWeNeedToBeAt = Robot.René.angleRequiredToTurn(10.00-Robot.René.getX(), 10.00-Robot.René.getY(), distanceBetweenLocations);
+			while (Robot.René.getX() != gearX && Robot.René.getY() != gearY) {
+				double distanceBetweenLocations = Robot.René.distanceBetweenPoints(Robot.René.getX(), Robot.René.getY(), gearX, gearY);
+				double angleWeNeedToBeAt = Robot.René.angleRequiredToTurn(gearX-Robot.René.getX(), gearY-Robot.René.getY(), distanceBetweenLocations);
 				if (angleWeNeedToBeAt != Robot.René.chicken.getAngle()) {
 					if (angleWeNeedToBeAt >= 180) {
 						while (angleWeNeedToBeAt != Robot.René.getUsefulAngle()) {
