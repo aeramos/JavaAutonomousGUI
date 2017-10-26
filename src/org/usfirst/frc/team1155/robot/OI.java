@@ -1,14 +1,28 @@
 package org.usfirst.frc.team1155.robot;
 
 import edu.wpi.first.wpilibj.buttons.Button;
-
-import org.usfirst.frc.team1155.robot.commands.ExampleCommand;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import org.usfirst.frc.team1155.robot.commands.MetropolitanTransportationAuthority;
+import org.usfirst.frc.team1155.robot.subsystems.GlobalPositioningSubsystem.Location;
 
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
+	
+	public static Joystick leftJoystick, rightJoystick;
+	
+	public OI() {
+		leftJoystick = new Joystick(PortMap.JOYSTICK_LEFT);
+		rightJoystick = new Joystick(PortMap.JOYSTICK_RIGHT);
+		new JoystickButton(OI.rightJoystick, 3).whenPressed(new MetropolitanTransportationAuthority(Location.Gear));
+		new JoystickButton(OI.rightJoystick, 4).whenPressed(new MetropolitanTransportationAuthority(Location.Airship));
+		new JoystickButton(OI.rightJoystick, 5).whenPressed(new MetropolitanTransportationAuthority(Location.StartingPos));
+		
+	}
+	
 	//// CREATING BUTTONS
 	// One type of button is a joystick button which is any button on a
 	//// joystick.

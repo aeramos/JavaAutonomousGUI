@@ -13,6 +13,7 @@ public class GlobalPositioningSubsystem extends Subsystem{
 	
 	public static Location place;
 	public CANTalon frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
+	//X and Y coordinates of the various positions
 	public double gearX = 10.00;
 	public double gearY = 10.00;
 	public double airshipX = 5.00;

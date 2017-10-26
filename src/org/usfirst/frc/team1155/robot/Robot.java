@@ -35,7 +35,7 @@ public class Robot extends IterativeRobot {
 
 	public static DesCartesianPlane René;
 	private ClockworkOrange theWatchmen;
-	ADXRS450_Gyro chicken;
+	private ADXRS450_Gyro chicken;
 	private ADXL345_I2C excel;
 	
 	/**
@@ -45,12 +45,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		oi = new OI();
+		
 		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		theWatchmen = new ClockworkOrange();
-		chicken = new ADXRS450_Gyro(SPI.Port.kMXP); //Change Later
-		excel = new ADXL345_I2C(I2C.Port.kOnboard, Accelerometer.Range.k16G); //Change Later
+		chicken = new ADXRS450_Gyro(PortMap.GYRO_PORT); //Change Later
+		excel = new ADXL345_I2C(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE); //Change Later
 		René = new DesCartesianPlane(theWatchmen, chicken, excel);
 	}
 
