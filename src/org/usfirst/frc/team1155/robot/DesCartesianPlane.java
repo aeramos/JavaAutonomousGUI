@@ -4,9 +4,16 @@ import edu.wpi.first.wpilibj.ADXL345_I2C;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 public class DesCartesianPlane{
-	private double x;
-	private double y;
-	private double velocity;
+	private double x = 0;
+	private double y = 0;
+	private double xVelocity = 0;
+	private double yVelocity = 0;
+	private double preVelocityX = 0;
+	private double preVelocityY = 0;
+	private double prevAccelX = 0;
+	private double prevAccelY = 0;
+	private double accelX;
+	private double accelY;
 	
 	public ClockworkOrange theWatchmen;
 	public ADXRS450_Gyro chicken;
@@ -17,25 +24,19 @@ public class DesCartesianPlane{
 		chicken = halal;
 		excel = sheets;
 	}
-	public void doesTheMath() {
-		x = 0;
-		y = 0;
-		double xVelocity = 0;
-		double yVelocity = 0;
-		double preVelocityX = 0;
-		double preVelocityY = 0;
-		double prevAccelX = 0;
-		double prevAccelY = 0;
-		double currentXaccel = excel.getX();
-		double currentYaccel = excel.getY();
+	public void updatePosition() {
+		currentXaccel = excel.getX();
+		currentYaccel = excel.getY();
 
-		for(double i = theWatchmen.getStartTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference()){
+		
+
+		for(double i = theWatchmen.getPreviousTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference()){
 			xVelocity += 0.5 * i * (prevAccelX + currentXaccel);
 			yVelocity += 0.5 * i * (prevAccelY + currentYaccel);
 			prevAccelX = currentXaccel;
 			prevAccelY = currentYaccel;
 		}
-		for(double i = theWatchmen.getStartTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference()){
+		for(double i = theWatchmen.getPreviousTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference()){
 			x += 0.5 * i * (preVelocityX + xVelocity);
 			y += 0.5 * i * (preVelocityY + yVelocity);
 			preVelocityX = xVelocity;
