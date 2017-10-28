@@ -6,14 +6,15 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 public class DesCartesianPlane{
 	private double x = 0;
 	private double y = 0;
-	private double xVelocity = 0;
-	private double yVelocity = 0;
-	private double preVelocityX = 0;
-	private double preVelocityY = 0;
-	private double prevAccelX = 0;
-	private double prevAccelY = 0;
-	private double accelX;
-	private double accelY;
+	private double prevXD = 0;      //Note: D means 'dot,' as in differentiate
+	private double prevYD = 0;
+	private double xD = 0;
+	private double yD = 0;
+	private double prevXDD = 0;     //Note: I'm a cool edgy tween so I prefer to use already accepted notations
+	private double prevYDD = 0;
+	private double xDD;
+	private double yDD;
+	private double dt;              //Note: "very small change in time, with nothing related to infinitesimals"
 	
 	public ClockworkOrange theWatchmen;
 	public ADXRS450_Gyro chicken;
@@ -25,23 +26,22 @@ public class DesCartesianPlane{
 		excel = sheets;
 	}
 	public void updatePosition() {
-		currentXaccel = excel.getX();
-		currentYaccel = excel.getY();
+		xDD = excel.getX();
+		yDD = excel.getY();
+		dt = theWatchmen.getTimeDifference();
 
-		
+		xD += 0.5 * dt * (prevXDD + xDD);
+		yD += 0.5 * dt * (prevYDD + yDD);
 
-		for(double i = theWatchmen.getPreviousTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference()){
-			xVelocity += 0.5 * i * (prevAccelX + currentXaccel);
-			yVelocity += 0.5 * i * (prevAccelY + currentYaccel);
-			prevAccelX = currentXaccel;
-			prevAccelY = currentYaccel;
-		}
-		for(double i = theWatchmen.getPreviousTime(); i <= theWatchmen.getCurrentTime(); i += theWatchmen.getTimeDifference()){
-			x += 0.5 * i * (preVelocityX + xVelocity);
-			y += 0.5 * i * (preVelocityY + yVelocity);
-			preVelocityX = xVelocity;
-			preVelocityY = yVelocity;
-		}
+		x += 0.5 * dt * (prevXD + xD);
+		y += 0.5 * dt * (prevYD + yD);
+
+		prevXDD = xDD;
+		prevYDD = yDD;
+
+		prevXD = xD;
+		prevYD = yD;
+
 	}
 	public double getX() {
 		return x;
@@ -50,8 +50,7 @@ public class DesCartesianPlane{
 	public double getY() {
 		return y;
 	}
-		
-	
+			
 	
 	public double getVelocity() {
 		return velocity; //Shouldn't be needed, mostly for testing
