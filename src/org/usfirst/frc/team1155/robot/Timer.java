@@ -1,10 +1,10 @@
 package org.usfirst.frc.team1155.robot;
 
-public class ClockworkOrange{
+public class Timer{
 
 	private double startTime, previousTime, currentTime, differenceInTime;
 	
-	public ClockworkOrange(){
+	public Timer(){
 		// It's funny how the colors of the real world only seem really real when you viddy them on the screen.
 	}
 	

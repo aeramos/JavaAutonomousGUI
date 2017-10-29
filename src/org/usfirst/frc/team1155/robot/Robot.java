@@ -49,10 +49,10 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
-		theWatchmen = new ClockworkOrange();
-		chicken = new ADXRS450_Gyro(PortMap.GYRO_PORT); //Change Later
-		excel = new ADXL345_I2C(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE); //Change Later
-		René = new DesCartesianPlane(theWatchmen, chicken, excel);
+		timer = new ClockworkOrange();
+		gyro = new ADXRS450_Gyro(PortMap.GYRO_PORT); //Change Later
+		accelerometer = new ADXL345_I2C(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE); //Change Later
+		plane = new DesCartesianPlane(timer, gyro, accelerometer);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		René.theWatchmen.setStartTime();
+		plane.timer.setStartTime();
 		autonomousCommand = chooser.getSelected();
 
 		/*
@@ -104,7 +104,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		System.out.println(René.theWatchmen.getTimeDifference());
+		System.out.println(plane.timer.getTimeDifference());
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		System.out.println(René.theWatchmen.getTimeDifference());
+		System.out.println(plane.timer.getTimeDifference());
 	}
 
 	/**

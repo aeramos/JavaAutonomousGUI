@@ -6,41 +6,41 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 public class DesCartesianPlane{
 	private double x = 0;
 	private double y = 0;
-	private double prevXD = 0;      //Note: D means 'dot,' as in differentiate
-	private double prevYD = 0;
-	private double xD = 0;
-	private double yD = 0;
-	private double prevXDD = 0;     //Note: I'm a cool edgy tween so I prefer to use already accepted notations
-	private double prevYDD = 0;
-	private double xDD;
-	private double yDD;
-	private double dt;              //Note: "very small change in time, with nothing related to infinitesimals"
+	private double prevVx = 0;
+	private double prevVy = 0;
+	private double vx = 0;
+	private double vy = 0;
+	private double prevAx = 0;
+	private double prevAy = 0;
+	private double ax;
+	private double ay;
+	private double dt;
 	
-	public ClockworkOrange theWatchmen;
-	public ADXRS450_Gyro chicken;
-	public ADXL345_I2C excel;
+	public Timer timer;
+	public ADXRS450_Gyro gyro;
+	public ADXL345_I2C accelerometer;
 	
-	public DesCartesianPlane(ClockworkOrange orange, ADXRS450_Gyro halal, ADXL345_I2C sheets) {
-		theWatchmen = orange;
-		chicken = halal;
-		excel = sheets;
+	public DesCartesianPlane(Timer aTimer, ADXRS450_Gyro aGyro, ADXL345_I2C anAccelerometer) {
+		timer = aTimer;
+		gyro = aGyro;
+		accelerometer = anAccelerometer;
 	}
 	public void updatePosition() {
-		xDD = excel.getX();
-		yDD = excel.getY();
-		dt = theWatchmen.getTimeDifference();
+		ax = accelerometer.getX();
+		ay = accelerometer.getY();
+		dt = timer.getTimeDifference();
 
-		xD += 0.5 * dt * (prevXDD + xDD);
-		yD += 0.5 * dt * (prevYDD + yDD);
+		vx += 0.5 * dt * (prevAx + ax);
+		vy += 0.5 * dt * (prevAy + ay);
 
-		x += 0.5 * dt * (prevXD + xD);
-		y += 0.5 * dt * (prevYD + yD);
+		x += 0.5 * dt * (prevVx + vx);
+		y += 0.5 * dt * (prevVy + vy);
 
-		prevXDD = xDD;
-		prevYDD = yDD;
+		prevAx = ax;
+		prevAy = ay;
 
-		prevXD = xD;
-		prevYD = yD;
+		prevVx = vx;
+		prevVy = vy;
 
 	}
 	public double getX() {
@@ -50,37 +50,17 @@ public class DesCartesianPlane{
 	public double getY() {
 		return y;
 	}
-			
-	
-	public double getVelocity() {
-		return velocity; //Shouldn't be needed, mostly for testing
-	}
-	
-	public void setVelocity(double set) {	
-		velocity = set; //Shouldn't be needed, mostly for testing
-	}
-	
-	public double distanceBetweenPoints(double x1, double y1, double x2, double y2) {
-		return Math.hypot(x2 - x1, y2 - y1);//bowen is sus
-	}
-	
-	public double distanceBetweenCoords(double x1y1, double x2y2) {
-		return x2y2 - x1y1;
-	}
 
-	public double angleRequiredToTurn(double xDistance, double yDistance, double radius) { //Basically Bowen
-		if (yDistance >= 0) {
-			return Math.toDegrees(Math.asin(xDistance/radius));
-		} else {
-			return 90 + Math.toDegrees(Math.asin(yDistance/radius));
-		}
+	public double angleRequiredToTurn(double xDistance, double yDistance, double radius) { //Basically Bowen	
+
+		double angle = Math.toDegrees(Math.asin(xDistance/radius));
+
+		return yDistance >= 0 ? angle : angle + 90;
+
 	}
 	
 	public double getUsefulAngle() {
-		if (chicken.getAngle() > 180) {
-			return -(360 - chicken.getAngle());
-		} else {
-			return chicken.getAngle();
-		}
+		return gyro.getAngle() > 180 ? gyro.getAngle() - 360 : gyro.getAngle();
+
 	}
 }
