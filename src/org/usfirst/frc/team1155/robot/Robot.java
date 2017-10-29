@@ -33,10 +33,10 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
-	public static DesCartesianPlane René;
-	private ClockworkOrange theWatchmen;
-	private ADXRS450_Gyro chicken;
-	private ADXL345_I2C excel;
+	public static DesCartesianPlane plane;
+	private Timer timer;
+	private ADXRS450_Gyro gyro;
+	private ADXL345_I2C accelerometer;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -49,7 +49,7 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
-		timer = new ClockworkOrange();
+		timer = new Timer();
 		gyro = new ADXRS450_Gyro(PortMap.GYRO_PORT); //Change Later
 		accelerometer = new ADXL345_I2C(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE); //Change Later
 		plane = new DesCartesianPlane(timer, gyro, accelerometer);
