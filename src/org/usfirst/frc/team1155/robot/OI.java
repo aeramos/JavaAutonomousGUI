@@ -17,9 +17,6 @@ public class OI {
 	public OI() {
 		leftJoystick = new Joystick(PortMap.JOYSTICK_LEFT);
 		rightJoystick = new Joystick(PortMap.JOYSTICK_RIGHT);
-		new JoystickButton(OI.rightJoystick, 3).whenPressed(new MetropolitanTransportationAuthority(Location.Gear));
-		new JoystickButton(OI.rightJoystick, 4).whenPressed(new MetropolitanTransportationAuthority(Location.Airship));
-		new JoystickButton(OI.rightJoystick, 5).whenPressed(new MetropolitanTransportationAuthority(Location.StartingPos));
 		
 	}
 	

@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1155.robot.commands.ExampleCommand;
 import org.usfirst.frc.team1155.robot.subsystems.ExampleSubsystem;
-import org.usfirst.frc.team1155.robot.subsystems.GlobalPositioningSubsystem;
+import org.usfirst.frc.team1155.robot.subsystems.DriveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,16 +27,16 @@ import org.usfirst.frc.team1155.robot.subsystems.GlobalPositioningSubsystem;
 public class Robot extends IterativeRobot {
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
-	public static final GlobalPositioningSubsystem googleMaps = new GlobalPositioningSubsystem();
+	public static final DriveSubsystem googleMaps = new DriveSubsystem();
 	public static OI oi;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
 	public static DesCartesianPlane plane;
-	private Timer timer;
-	private ADXRS450_Gyro gyro;
-	private ADXL345_I2C accelerometer;
+	public Timer timer;
+	public ADXRS450_Gyro gyro;
+	public ADXL345_I2C accelerometer;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
