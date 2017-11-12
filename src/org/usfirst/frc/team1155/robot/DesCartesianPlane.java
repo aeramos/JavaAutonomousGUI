@@ -2,6 +2,8 @@ package org.usfirst.frc.team1155.robot;
 
 import edu.wpi.first.wpilibj.ADXL345_I2C;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+
 
 public class DesCartesianPlane{
 	private double x = 0;
@@ -25,11 +27,14 @@ public class DesCartesianPlane{
 		gyro = aGyro;
 		accelerometer = anAccelerometer;
 	}
-	public void updatePosition() {
-		ax = accelerometer.getX();
-		ay = accelerometer.getY();
-		dt = timer.getTimeDifference();
 
+	public void updatePosition() {
+		ax = accelerometer.getX() * 9.80665;
+		ay = accelerometer.getX() * 9.80665;
+		dt = (timer.getTimeDifference() / 1000);
+		Robot.smart.putNumber("DB/dt", dt);
+		Robot.smart.putNumber("DB/ax", ax);
+		Robot.smart.putNumber("DB/ay", ay);
 		vx += 0.5 * dt * (prevAx + ax);
 		vy += 0.5 * dt * (prevAy + ay);
 
@@ -41,6 +46,8 @@ public class DesCartesianPlane{
 
 		prevVx = vx;
 		prevVy = vy;
+
+		System.out.println("(" + x + ", " + y + ")");
 
 	}
 	public double getX() {

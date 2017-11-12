@@ -1,50 +1,42 @@
 package org.usfirst.frc.team1155.robot;
 
-import edu.wpi.first.wpilibj.buttons.Button;
+import org.usfirst.frc.team1155.robot.commands.ClimbCommand;
+import org.usfirst.frc.team1155.robot.commands.DepositGearCommand;
+import org.usfirst.frc.team1155.robot.commands.DistanceDriveCommand;
+import org.usfirst.frc.team1155.robot.commands.DriveDegreesCommand;
+import org.usfirst.frc.team1155.robot.commands.GearCommand;
+import org.usfirst.frc.team1155.robot.commands.GyroTurnCommand;
+import org.usfirst.frc.team1155.robot.commands.MechanumDriveCommand;
+import org.usfirst.frc.team1155.robot.commands.ShootCommand;
+import org.usfirst.frc.team1155.robot.commands.TankDriveCommand;
+import org.usfirst.frc.team1155.robot.commands.ShootCommand.ShooterSide;
+import org.usfirst.frc.team1155.robot.subsystems.GearSubsystem.GearPosition;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import org.usfirst.frc.team1155.robot.commands.MetropolitanTransportationAuthority;
-import org.usfirst.frc.team1155.robot.subsystems.GlobalPositioningSubsystem.Location;
 
-/**
- * This class is the glue that binds the controls on the physical operator
- * interface to the commands and command groups that allow control of the robot.
- */
-public class OI {
-	
+public class OI  {
+
 	public static Joystick leftJoystick, rightJoystick;
-	
+
 	public OI() {
+		
 		leftJoystick = new Joystick(PortMap.JOYSTICK_LEFT);
 		rightJoystick = new Joystick(PortMap.JOYSTICK_RIGHT);
 		
+		new JoystickButton(OI.rightJoystick, 3).whenPressed(new TankDriveCommand());
+		new JoystickButton(OI.rightJoystick, 4).whenPressed(new MechanumDriveCommand());
+		
+		new JoystickButton(OI.leftJoystick, 2).whenPressed(new DepositGearCommand());
+		//new JoystickButton(OI.leftJoystick, 3).whenPressed(new GearCommand(GearPosition.CLOSE));
+		
+		//new JoystickButton(OI.leftJoystick, 2).whenPressed(new GearCommand(GearPosition.OPEN));
+		//new JoystickButton(OI.leftJoystick, 3).whenPressed(new GearCommand(GearPosition.CLOSE));
+		
+		
+		new JoystickButton(OI.leftJoystick, 1).whenPressed(new ShootCommand(ShooterSide.LEFT)); //drive 4 feet
+		new JoystickButton(OI.rightJoystick, 1).whenPressed(new ShootCommand(ShooterSide.RIGHT)); //turn 180 degrees
+		
+		new JoystickButton(OI.rightJoystick, 2).whenPressed(new ClimbCommand());
 	}
-	
-	//// CREATING BUTTONS
-	// One type of button is a joystick button which is any button on a
-	//// joystick.
-	// You create one by telling it which joystick it's on and which button
-	// number it is.
-	// Joystick stick = new Joystick(port);
-	// Button button = new JoystickButton(stick, buttonNumber);
-
-	// There are a few additional built in buttons you can use. Additionally,
-	// by subclassing Button you can create custom triggers and bind those to
-	// commands the same as any other Button.
-
-	//// TRIGGERING COMMANDS WITH BUTTONS
-	// Once you have a button, it's trivial to bind it to a button in one of
-	// three ways:
-
-	// Start the command when the button is pressed and let it run the command
-	// until it is finished as determined by it's isFinished method.
-	// button.whenPressed(new ExampleCommand());
-
-	// Run the command while the button is being held down and interrupt it once
-	// the button is released.
-	// button.whileHeld(new ExampleCommand());
-
-	// Start the command when the button is released and let it run the command
-	// until it is finished as determined by it's isFinished method.
-	// button.whenReleased(new ExampleCommand());
 }

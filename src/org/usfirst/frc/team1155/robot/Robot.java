@@ -1,68 +1,178 @@
 
 package org.usfirst.frc.team1155.robot;
 
-import edu.wpi.first.wpilibj.ADXL345_I2C;
+
+import org.usfirst.frc.team1155.robot.commands.AutonomousCommand;
+import org.usfirst.frc.team1155.robot.commands.AutonomousCommand.AutoRoutine;
+import org.usfirst.frc.team1155.robot.commands.TankDriveCommand;
+import org.usfirst.frc.team1155.robot.subsystems.ClimberSubsystem;
+import org.usfirst.frc.team1155.robot.subsystems.DriveSubsystem;
+import org.usfirst.frc.team1155.robot.subsystems.GearSubsystem;
+import org.usfirst.frc.team1155.robot.subsystems.ImageSubsystem;
+import org.usfirst.frc.team1155.robot.subsystems.ShooterSubsystem;
+
+import edu.wpi.first.wpilibj.ADXL345_SPI;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
-import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 
-import org.usfirst.frc.team1155.robot.commands.ExampleCommand;
-import org.usfirst.frc.team1155.robot.subsystems.ExampleSubsystem;
-import org.usfirst.frc.team1155.robot.subsystems.DriveSubsystem;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class Robot extends IterativeRobot {
-
-	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
-	public static final DriveSubsystem googleMaps = new DriveSubsystem();
+	int x = 0;
+	public static DriveSubsystem driveSubsystem; 
+	public static ShooterSubsystem shooterSubsystem;
+	public static GearSubsystem gearSubsystem;
+	public static ClimberSubsystem climberSubsystem;
+//	public static ImageSubsystem imageSubsystem;
+	public static SmartDashboard smart;
 	public static OI oi;
 
-	Command autonomousCommand;
-	SendableChooser<Command> chooser = new SendableChooser<>();
 
 	public static DesCartesianPlane plane;
-	public Timer timer;
-	public ADXRS450_Gyro gyro;
-	public ADXL345_I2C accelerometer;
 	
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
+	public Timer timer;
+//	public static ADXL345_I2C accelerometer;
+	public static ADXL345_SPI accel;
+	public static ADXRS450_Gyro gyro;
+	
+	public static AutoRoutine autoRoutine;
+	
+	public static RioDuinoController rioDuino;
+	public static DriverStation.Alliance allianceColor;
+	String rioDuinoLEDMode;
+	public static Compressor compressor;
+
+	public static boolean isInTeleop;
+	
 	@Override
 	public void robotInit() {
+
+		timer = new Timer();
+    	gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+    	//accelerometer = new ADXL345_I2C(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE);
+    	accel = new ADXL345_SPI();
+    	smart = new SmartDashboard();
+    	
+    	plane = new DesCartesianPlane(timer, gyro, accel);
+
+		driveSubsystem = new DriveSubsystem();
+		gearSubsystem = new GearSubsystem();
+		shooterSubsystem = new ShooterSubsystem();
+		climberSubsystem = new ClimberSubsystem();
+//		imageSubsystem = new ImageSubsystem();
+		
+		compressor = new Compressor(0);
+		
 		oi = new OI();
 		
-		chooser.addDefault("Default Auto", new ExampleCommand());
-		// chooser.addObject("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", chooser);
-		timer = new Timer();
-		gyro = new ADXRS450_Gyro(PortMap.GYRO_PORT); //Change Later
-		accelerometer = new ADXL345_I2C(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE); //Change Later
-		plane = new DesCartesianPlane(timer, gyro, accelerometer);
+		rioDuino = new RioDuinoController();
+		
+		isInTeleop = false;
+		
+		SmartDashboard.putString("Auto Routine: ", "ACTION POSITION");
+	}
+	
+	@Override
+	public void teleopInit() {
+		//gyro.reset();
+		plane.timer.setStartTime();
+		driveSubsystem.resetEncoders();
+		driveSubsystem.endAdjustment();
+		
+		isInTeleop = true;
+		
+		//rioDuino.SendString("green");
+
+		new TankDriveCommand().start(); 
+//		compressor = new Compressor(0);
 	}
 
-	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-	 */
 	@Override
-	public void disabledInit() {
+	public void teleopPeriodic() {
+    	Scheduler.getInstance().run();
 
+    	//SmartDashboard.putNumber("Gyro Angle", Robot.gyro.getAngle());
+    	//SmartDashboard.putNumber("Ultrasonic Distance", Robot.driveSubsystem.getUltrasonic());
+    	//SmartDashboard.putString("Ultrasonic Valid", "" + Robot.driveSubsystem.ultrasonic.isRangeValid());
+    	//System.out.println(Robot.driveSubsystem.getEncDistance());
+    	  
+    	//testing servos
+    	Robot.shooterSubsystem.leftShootServo.set(-OI.leftJoystick.getThrottle());
+    	Robot.shooterSubsystem.rightShootServo.set(1+OI.leftJoystick.getThrottle());
+    	//System.out.println(Robot.shooterSubsystem.leftShootServo.get());
+		
+		if (OI.leftJoystick.getRawButton(1) || OI.rightJoystick.getRawButton(1)){
+			compressor.stop();
+		}
+		else if(!compressor.enabled()){
+			compressor.start();
+		}
+		
+		plane.updatePosition();
+		
+		smart.putNumber("DB/getX", plane.getX());
+		smart.putNumber("DB/getY", plane.getY());
+	}
+	
+	/*	@Override
+	public void autonomousInit() {
+		isInTeleop = false;
+		
+		switch(SmartDashboard.getString("Auto Routine: ").toLowerCase()){
+		case "gear left":
+			autoRoutine = AutoRoutine.GEAR_LEFT;
+			break;
+		case "gear right":
+			autoRoutine = AutoRoutine.GEAR_RIGHT;
+			break;
+		case "gear middle":
+			autoRoutine = AutoRoutine.GEAR_MIDDLE;
+			break;
+		case "shoot red":
+			autoRoutine = AutoRoutine.SHOOT_RED;
+			break;
+		case "shoot blue":
+			autoRoutine = AutoRoutine.SHOOT_BLUE;
+			break;
+		default:
+			autoRoutine = AutoRoutine.NOTHING;
+			break;
+		}
+		
+		//compressor.start();
+		autoRoutine = AutoRoutine.GEAR_MIDDLE;
+		//System.out.println(autoRoutine.name());
+		new AutonomousCommand(autoRoutine).start();	
+		
+	}
+*/
+	@Override
+	public void autonomousPeriodic() {
+    	//SmartDashboard.putNumber("Gyro Angle", Robot.gyro.getAngle());
+
+		Scheduler.getInstance().run();
+	}
+
+	@Override
+	public void disabledInit() {	
+		Robot.driveSubsystem.endAdjustment();
+		
+		if(shooterSubsystem.leftAgitatorServo != null && shooterSubsystem.rightAgitatorServo != null) {
+			shooterSubsystem.stopAgitators();
+		}
+		
+//		if(rioDuino != null)
+//			rioDuino.SendString("disableInit");
+		
+//		if(gyro != null)
+//			gyro.reset();
 	}
 
 	@Override
@@ -70,67 +180,15 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
-	 */
 	@Override
-	public void autonomousInit() {
-		plane.timer.setStartTime();
-		autonomousCommand = chooser.getSelected();
-
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
-
-		// schedule the autonomous command (example)
-		if (autonomousCommand != null)
-			autonomousCommand.start();
+	public void testInit() {
+		compressor = new Compressor(0);
+		compressor.start();
 	}
-
-	/**
-	 * This function is called periodically during autonomous
-	 */
-	@Override
-	public void autonomousPeriodic() {
-		Scheduler.getInstance().run();
-		System.out.println(plane.timer.getTimeDifference());
-	}
-
-	@Override
-	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		if (autonomousCommand != null)
-			autonomousCommand.cancel();
-	}
-
-	/**
-	 * This function is called periodically during operator control
-	 */
-	@Override
-	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
-		System.out.println(plane.timer.getTimeDifference());
-	}
-
-	/**
-	 * This function is called periodically during test mode
-	 */
+	
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
+
 	}
 }
