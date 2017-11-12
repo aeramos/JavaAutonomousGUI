@@ -1,9 +1,5 @@
 package auto_gui;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import auto_gui.api.LinePlus;
 import auto_gui.api.Path;
 import javafx.fxml.FXML;
@@ -22,6 +18,10 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
 class Controller extends Pane {
     private Stage stage;
 
@@ -39,69 +39,17 @@ class Controller extends Pane {
     private double minLineLength = 100;
     private boolean isCreatingPath = false;
 
-    private void setPathColorOnTextMouseOver(Text text, Color startColor, Color endColor, Path path) {
+    private void setPathColorOnTextMouseOver(Text text, Path path) {
         text.setOnMouseEntered(event -> {
-            path.setColor(endColor);
+            path.setColor(Color.RED);
         });
         text.setOnMouseExited(event -> {
-            path.setColor(startColor);
+            path.setColor(Color.BLACK);
         });
     }
 
     private Object getLastInList(List list) {
         return list.get(list.size() - 1);
-    }
-
-    private void addPathsToMenu(Menu menu, boolean isSaveMenu) {
-        menu.getItems().clear();
-        menu.getItems().add(new MenuItem("", new Text("Close")));
-        if (!isSaveMenu) {
-            menu.getItems().add(new MenuItem("", new Text("Delete all paths")));
-            for (Path path: paths) {
-                setPathColorOnTextMouseOver((Text)((MenuItem)getLastInList(menu.getItems())).getGraphic(), Color.BLACK, Color.RED, path);
-            }
-            ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
-                for (Path path : paths) {
-                    path.removeFromPane(this);
-                }
-                paths.clear();
-                addPathsToMenu(savePath, true);
-                addPathsToMenu(deletePath, false);
-            });
-        }
-        for (int i = 0; i < paths.size(); i++) {
-            Text text = new Text("Path " + (i + 1));
-            setPathColorOnTextMouseOver(text, Color.BLACK, Color.RED, paths.get(i));
-            menu.getItems().add(new MenuItem("", text));
-            final int j = i;
-            ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
-                if (isSaveMenu) {
-                    FileChooser fileChooser = new FileChooser();
-                    fileChooser.setTitle("Save Path");
-                    fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-                    File destination = fileChooser.showSaveDialog(stage);
-                    if (destination != null) {
-                        try {
-                            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(destination));
-                            outputStream.writeObject(paths.get(j).toCoordArray());
-                        } catch (Exception e) {
-                            System.out.println("Error saving");
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    paths.get(j).removeFromPane(this);
-                    paths.remove(j);
-                    addPathsToMenu(savePath, true);
-                    addPathsToMenu(deletePath, false);
-                }
-            });
-        }
-    }
-
-    private void addPathsToMenus() {
-        addPathsToMenu(savePath, true);
-        addPathsToMenu(deletePath, false);
     }
 
     Controller(Stage stage) {
@@ -134,7 +82,7 @@ class Controller extends Pane {
             if (event.getX() > imageContainer.getLayoutX() && event.getX() <= imageContainer.getBoundsInLocal().getWidth() && event.getY() > imageContainer.getLayoutY() && event.getY() <= imageContainer.getBoundsInLocal().getHeight()) {
                 paths.add(new Path());
                 paths.get(paths.size() - 1).add(new LinePlus(LineBuilder.create().stroke(Color.BLACK).strokeWidth(2f).startX(event.getX()).startY(event.getY()).build()));
-                endLine(paths.get(paths.size() - 1).get(paths.get(paths.size() - 1).size() -1), event.getX(), event.getY(), imageContainer.getLayoutX(), imageContainer.getLayoutY(), imageContainer.getBoundsInLocal().getWidth(), imageContainer.getBoundsInLocal().getHeight());
+                endLine(paths.get(paths.size() - 1).get(paths.get(paths.size() - 1).size() - 1), event.getX(), event.getY(), imageContainer.getLayoutX(), imageContainer.getLayoutY(), imageContainer.getBoundsInLocal().getWidth(), imageContainer.getBoundsInLocal().getHeight());
                 getChildren().add(paths.get(paths.size() - 1).get(paths.get(paths.size() - 1).size() - 1));
                 isCreatingPath = true;
             }
@@ -179,6 +127,58 @@ class Controller extends Pane {
             ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("auto_gui/resources/SciBorgs.png"));
             alert.showAndWait();
         });
+    }
+
+    private void addPathsToMenus() {
+        addPathsToMenu(savePath, true);
+        addPathsToMenu(deletePath, false);
+    }
+
+    private void addPathsToMenu(Menu menu, boolean isSaveMenu) {
+        menu.getItems().clear();
+        menu.getItems().add(new MenuItem("", new Text("Close")));
+        if (!isSaveMenu) {
+            menu.getItems().add(new MenuItem("", new Text("Delete all paths")));
+            for (Path path : paths) {
+                setPathColorOnTextMouseOver((Text)((MenuItem)getLastInList(menu.getItems())).getGraphic(), path);
+            }
+            ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
+                for (Path path : paths) {
+                    path.removeFromPane(this);
+                }
+                paths.clear();
+                addPathsToMenu(savePath, true);
+                addPathsToMenu(deletePath, false);
+            });
+        }
+        for (int i = 0; i < paths.size(); i++) {
+            Text text = new Text("Path " + (i + 1));
+            setPathColorOnTextMouseOver(text, paths.get(i));
+            menu.getItems().add(new MenuItem("", text));
+            final int j = i;
+            ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
+                if (isSaveMenu) {
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.setTitle("Save Path");
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                    File destination = fileChooser.showSaveDialog(stage);
+                    if (destination != null) {
+                        try {
+                            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(destination));
+                            outputStream.writeObject(paths.get(j).toCoordArray());
+                        } catch (Exception e) {
+                            System.out.println("Error saving");
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    paths.get(j).removeFromPane(this);
+                    paths.remove(j);
+                    addPathsToMenu(savePath, true);
+                    addPathsToMenu(deletePath, false);
+                }
+            });
+        }
     }
 
     private void endLine(Line line, double endX, double endY, double boundStartX, double boundStartY, double boundEndX, double boundEndY) {

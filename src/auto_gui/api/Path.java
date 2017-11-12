@@ -31,9 +31,7 @@ public class Path extends ArrayList<LinePlus> {
         for (int i = 0; i < array.length - 1; i++) {
             path.add(new LinePlus(LineBuilder.create().stroke(Color.BLACK).strokeWidth(2f).startX(array[i][0]).startY(array[i][1]).endX(array[i + 1][0]).endY(array[i + 1][1]).build()));
         }
-        System.out.println(path.size());
         return path;
-
     }
 
     public void addToPane(Pane pane) {
@@ -47,7 +45,6 @@ public class Path extends ArrayList<LinePlus> {
             pane.getChildren().remove(line);
         }
     }
-
 
     // for testing purposes. adds a red dot on the ends of each line
     public void addPointsToLines(Pane pane) {

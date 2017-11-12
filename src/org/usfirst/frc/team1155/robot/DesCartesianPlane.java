@@ -2,72 +2,63 @@ package org.usfirst.frc.team1155.robot;
 
 import edu.wpi.first.wpilibj.ADXL345_I2C;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+class DesCartesianPlane {
+    Timer timer;
+    private double x = 0;
+    private double y = 0;
+    private double prevVx = 0;
+    private double prevVy = 0;
+    private double vx = 0;
+    private double vy = 0;
+    private double prevAx = 0;
+    private double prevAy = 0;
+    private ADXRS450_Gyro gyro;
+    private ADXL345_I2C accelerometer;
 
-public class DesCartesianPlane{
-	private double x = 0;
-	private double y = 0;
-	private double prevVx = 0;
-	private double prevVy = 0;
-	private double vx = 0;
-	private double vy = 0;
-	private double prevAx = 0;
-	private double prevAy = 0;
-	private double ax;
-	private double ay;
-	private double dt;
-	
-	public Timer timer;
-	public ADXRS450_Gyro gyro;
-	public ADXL345_I2C accelerometer;
-	
-	public DesCartesianPlane(Timer aTimer, ADXRS450_Gyro aGyro, ADXL345_I2C anAccelerometer) {
-		timer = aTimer;
-		gyro = aGyro;
-		accelerometer = anAccelerometer;
-	}
+    DesCartesianPlane(Timer timer, ADXRS450_Gyro gyro, ADXL345_I2C accelerometer) {
+        this.timer = timer;
+        this.gyro = gyro;
+        this.accelerometer = accelerometer;
+    }
 
-	public void updatePosition() {
-		ax = accelerometer.getX() * 9.80665;
-		ay = accelerometer.getX() * 9.80665;
-		dt = (timer.getTimeDifference() / 1000);
-		Robot.smart.putNumber("DB/dt", dt);
-		Robot.smart.putNumber("DB/ax", ax);
-		Robot.smart.putNumber("DB/ay", ay);
-		vx += 0.5 * dt * (prevAx + ax);
-		vy += 0.5 * dt * (prevAy + ay);
+    void updatePosition() {
+        double ax = accelerometer.getX() * 9.80665;
+        double ay = accelerometer.getX() * 9.80665;
+        double dt = (timer.getTimeDifference() / 1000);
+        SmartDashboard.putNumber("DB/dt", dt);
+        SmartDashboard.putNumber("DB/ax", ax);
+        SmartDashboard.putNumber("DB/ay", ay);
+        vx += 0.5 * dt * (prevAx + ax);
+        vy += 0.5 * dt * (prevAy + ay);
 
-		x += 0.5 * dt * (prevVx + vx);
-		y += 0.5 * dt * (prevVy + vy);
+        x += 0.5 * dt * (prevVx + vx);
+        y += 0.5 * dt * (prevVy + vy);
 
-		prevAx = ax;
-		prevAy = ay;
+        prevAx = ax;
+        prevAy = ay;
 
-		prevVx = vx;
-		prevVy = vy;
+        prevVx = vx;
+        prevVy = vy;
 
-		System.out.println("(" + x + ", " + y + ")");
+        System.out.println("(" + x + ", " + y + ")");
+    }
 
-	}
-	public double getX() {
-		return x;
-	}
-	
-	public double getY() {
-		return y;
-	}
+    double getX() {
+        return x;
+    }
 
-	public double angleRequiredToTurn(double xDistance, double yDistance, double radius) { //Basically Bowen	
+    double getY() {
+        return y;
+    }
 
-		double angle = Math.toDegrees(Math.asin(xDistance/radius));
+    public double angleRequiredToTurn(double xDistance, double yDistance, double radius) { //Basically Bowen
+        double angle = Math.toDegrees(Math.asin(xDistance / radius));
+        return yDistance >= 0 ? angle : angle + 90;
+    }
 
-		return yDistance >= 0 ? angle : angle + 90;
-
-	}
-	
-	public double getUsefulAngle() {
-		return gyro.getAngle() > 180 ? gyro.getAngle() - 360 : gyro.getAngle();
-
-	}
+    public double getUsefulAngle() {
+        return gyro.getAngle() > 180 ? gyro.getAngle() - 360 : gyro.getAngle();
+    }
 }
