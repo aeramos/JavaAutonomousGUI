@@ -5,7 +5,7 @@ import org.usfirst.frc.team1155.robot.OI;
 import org.usfirst.frc.team1155.robot.Robot;
 import org.usfirst.frc.team1155.robot.subsystems.DriveSubsystem.DriveMode;
 
-class DriveDegreesCommand extends Command {
+public class DriveDegreesCommand extends Command {
     private double degrees;
 
     public DriveDegreesCommand(double degrees) {

@@ -23,6 +23,7 @@ class GyroTurnCommand extends Command {
 
         Robot.driveSubsystem.startAdjustment(initialAngle, initialAngle + degreesToTurn);
         // Sets PID of the PID controller to the values given on the SmartDashboard
+        Robot.driveSubsystem.getPIDController().setPID(1, 0, 0.1);
         Robot.driveSubsystem.getPIDController().setAbsoluteTolerance(1);
     }
 

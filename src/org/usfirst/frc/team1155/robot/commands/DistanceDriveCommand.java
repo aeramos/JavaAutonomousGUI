@@ -8,7 +8,7 @@ class DistanceDriveCommand extends Command {
     private double distanceToDrive;
 
     //distance in inches
-    DistanceDriveCommand(double distance) {
+    protected DistanceDriveCommand(double distance) {
         requires(Robot.driveSubsystem);
 
         distanceToDrive = distance;
@@ -19,8 +19,8 @@ class DistanceDriveCommand extends Command {
         Robot.driveSubsystem.resetEncoders();
 
         Robot.driveSubsystem.sensorMode = SensorMode.ENCODER;
-
         Robot.driveSubsystem.startAdjustment(Robot.driveSubsystem.getEncDistance(), distanceToDrive);
+        Robot.driveSubsystem.getPIDController().setPID(1 , 0, 0.1);
         Robot.driveSubsystem.getPIDController().setAbsoluteTolerance(2);
     }
 
