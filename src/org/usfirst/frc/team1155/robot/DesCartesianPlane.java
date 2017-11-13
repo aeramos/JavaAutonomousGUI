@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1155.robot;
 
-import edu.wpi.first.wpilibj.ADXL345_I2C;
+import edu.wpi.first.wpilibj.ADXL345_SPI;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,9 +15,9 @@ class DesCartesianPlane {
     private double prevAx = 0;
     private double prevAy = 0;
     private ADXRS450_Gyro gyro;
-    private ADXL345_I2C accelerometer;
+    private ADXL345_SPI accelerometer;
 
-    DesCartesianPlane(Timer timer, ADXRS450_Gyro gyro, ADXL345_I2C accelerometer) {
+    DesCartesianPlane(Timer timer, ADXRS450_Gyro gyro, ADXL345_SPI accelerometer) {
         this.timer = timer;
         this.gyro = gyro;
         this.accelerometer = accelerometer;

@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1155.robot;
 
-import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 
 public class PortMap {
@@ -43,6 +43,6 @@ public class PortMap {
 
     //***********SENSORS***********//
 
-    public static final I2C.Port ACCEL_PORT = I2C.Port.kOnboard;
+    public static final SPI.Port ACCEL_PORT = SPI.Port.kOnboard;
     public static final Accelerometer.Range ACCEL_RANGE = Accelerometer.Range.k16G;
 }

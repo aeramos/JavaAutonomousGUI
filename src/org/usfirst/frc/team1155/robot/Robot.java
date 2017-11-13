@@ -22,7 +22,7 @@ public class Robot extends IterativeRobot {
     private static SmartDashboard smart;
     private static OI oi;
     private static DesCartesianPlane plane;
-    private static ADXL345_I2C accelerometer;
+    private static ADXL345_SPI accelerometer;
     private static Compressor compressor;
     private Timer timer;
 
@@ -30,7 +30,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         timer = new Timer();
         gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
-        accelerometer = new ADXL345_I2C(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE);
+        accelerometer = new ADXL345_SPI(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE);
         smart = new SmartDashboard();
 
         plane = new DesCartesianPlane(timer, gyro, accelerometer);
