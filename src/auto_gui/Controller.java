@@ -1,15 +1,15 @@
 package auto_gui;
 
-import auto_gui.api.LinePlus;
 import auto_gui.api.Path;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -18,14 +18,14 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 class Controller extends Pane {
-    private Stage stage;
-
     private ArrayList<Path> paths = new ArrayList<>();
+    private ArrayList<ArrayList<Line>> lines = new ArrayList<>();
 
     @FXML
     private ImageView imageContainer;
@@ -34,26 +34,14 @@ class Controller extends Pane {
     @FXML
     private MenuItem openPath, about;
     @FXML
-    private TextField currentLine, currentPath, numberOfLines;
+    private TextField pathNumber, currentPath, numberOfPoints;
+    @FXML
+    private ChoiceBox drawMode;
 
     private double minLineLength = 100;
     private boolean isCreatingPath = false;
 
-    private void setPathColorOnTextMouseOver(Text text, Path path) {
-        text.setOnMouseEntered(event -> {
-            path.setColor(Color.RED);
-        });
-        text.setOnMouseExited(event -> {
-            path.setColor(Color.BLACK);
-        });
-    }
-
-    private Object getLastInList(List list) {
-        return list.get(list.size() - 1);
-    }
-
-    Controller(Stage stage) {
-        this.stage = stage;
+    Controller() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXML.fxml"));
         fxmlLoader.setController(this);
         fxmlLoader.setRoot(this);
@@ -62,61 +50,37 @@ class Controller extends Pane {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
         openPath.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open path");
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            File file = fileChooser.showOpenDialog(stage);
+            File file = fileChooser.showOpenDialog(new Stage());
             if (file != null) {
                 try {
-                    paths.add(Path.fromCoordArray((double[][])new ObjectInputStream(new FileInputStream(file)).readObject()));
+                    Path path = new Path(file);
+                    paths.add(path);
+                    lines.add(getLines(paths.get(paths.size() - 1)));
                     addPathsToMenus();
-                    paths.get(paths.size() - 1).addToPane(this);
-                } catch (Exception e) {
-                    System.out.println("Error opening file");
-                    e.printStackTrace();
+                    System.out.println("Loaded path from " + file);
+                } catch (IOException e) {
+                    System.out.println("Error loading path from " + file);
                 }
+            } else {
+                System.out.println("Error loading path: file not found");
             }
         });
-        setOnMousePressed(event -> {
-            if (event.getX() > imageContainer.getLayoutX() && event.getX() <= imageContainer.getBoundsInLocal().getWidth() && event.getY() > imageContainer.getLayoutY() && event.getY() <= imageContainer.getBoundsInLocal().getHeight()) {
-                paths.add(new Path());
-                paths.get(paths.size() - 1).add(new LinePlus(LineBuilder.create().stroke(Color.BLACK).strokeWidth(2f).startX(event.getX()).startY(event.getY()).build()));
-                endLine(paths.get(paths.size() - 1).get(paths.get(paths.size() - 1).size() - 1), event.getX(), event.getY(), imageContainer.getLayoutX(), imageContainer.getLayoutY(), imageContainer.getBoundsInLocal().getWidth(), imageContainer.getBoundsInLocal().getHeight());
-                getChildren().add(paths.get(paths.size() - 1).get(paths.get(paths.size() - 1).size() - 1));
-                isCreatingPath = true;
-            }
-        });
-        setOnMouseDragged(event -> {
-            if (isCreatingPath) {
-                // the latest path
-                Path path = paths.get(paths.size() - 1);
-                LinePlus line = path.get(path.size() - 1);
-                endLine(line, event.getX(), event.getY(), imageContainer.getLayoutX(), imageContainer.getLayoutY(), imageContainer.getBoundsInLocal().getWidth(), imageContainer.getBoundsInLocal().getHeight());
-                if (line.getLength() >= minLineLength) {
-                    path.add(new LinePlus(LineBuilder.create().stroke(Color.BLACK).strokeWidth(2f).startX(line.getEndX()).startY(line.getEndY()).endX(line.getEndX()).endY(line.getEndY()).build()));
-                    getChildren().add(path.get(path.size() - 1));
-                }
-                currentLine.setText(String.format("%.2f", ((LinePlus)getLastInList(path)).getLength()));
-                currentPath.setText(String.format("%.2f", path.getLength()));
-                numberOfLines.setText(String.valueOf(path.size()));
-            }
-        });
-        setOnMouseReleased(event -> {
-            if (isCreatingPath) {
-                // the latest path
-                Path path = paths.get(paths.size() - 1);
-                Line line = path.get(path.size() - 1);
-                endLine(line, event.getX(), event.getY(), imageContainer.getLayoutX(), imageContainer.getLayoutY(), imageContainer.getBoundsInLocal().getWidth(), imageContainer.getBoundsInLocal().getHeight());
-                //getChildren().add(line);
-                simplifyPath(path);
-                numberOfLines.setText(String.valueOf(path.size()));
 
-                isCreatingPath = false;
-                //savePath.getItems().add(new MenuItem("Path " + paths.size()));
-                addPathsToMenus();
+        drawMode.getItems().addAll("Click mode", "Drag mode");
+        drawMode.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals(0)) {
+                setMode(true);
+            } else if (newValue.equals(1)) {
+                setMode(false);
             }
         });
+        drawMode.getSelectionModel().select(0);
+
         about.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("About the SciBorgs Java Autonomous GUI");
@@ -129,6 +93,19 @@ class Controller extends Pane {
         });
     }
 
+    private ArrayList<Line> getLines(Path path) {
+        ArrayList<Line> lines = new ArrayList<>();
+        for (int i = 0; i < path.size() - 1; i++) {
+            lines.add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(path.get(i)[0]).startY(path.get(i)[1]).endX(path.get(i)[0]).endY(path.get(i)[1]).build());
+            lines.add(LineBuilder.create().strokeWidth(2f).stroke(Color.BLACK).startX(path.get(i)[0]).startY(path.get(i)[1]).endX(path.get(i + 1)[0]).endY(path.get(i + 1)[1]).build());
+            getChildren().add(lines.get(lines.size() - 2));
+            getChildren().add(lines.get(lines.size() - 1));
+        }
+        lines.add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(path.getLast()[0]).startY(path.getLast()[1]).endX(path.getLast()[0]).endY(path.getLast()[1]).build());
+        getChildren().add(lines.get(lines.size() - 1));
+        return lines;
+    }
+
     private void addPathsToMenus() {
         addPathsToMenu(savePath, true);
         addPathsToMenu(deletePath, false);
@@ -138,14 +115,17 @@ class Controller extends Pane {
         menu.getItems().clear();
         menu.getItems().add(new MenuItem("", new Text("Close")));
         if (!isSaveMenu) {
-            menu.getItems().add(new MenuItem("", new Text("Delete all paths")));
-            for (Path path : paths) {
-                setPathColorOnTextMouseOver((Text)((MenuItem)getLastInList(menu.getItems())).getGraphic(), path);
-            }
+            Text text = new Text("Delete all paths");
+            setPathColorOnTextMouseover(text, lines);
+            menu.getItems().add(new MenuItem("", text));
+            // when "Delete all paths" is selected, delete all paths
             ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
-                for (Path path : paths) {
-                    path.removeFromPane(this);
+                for (ArrayList<Line> lines : lines) {
+                    for (Line line : lines) {
+                        getChildren().remove(line);
+                    }
                 }
+                lines.clear();
                 paths.clear();
                 addPathsToMenu(savePath, true);
                 addPathsToMenu(deletePath, false);
@@ -153,7 +133,7 @@ class Controller extends Pane {
         }
         for (int i = 0; i < paths.size(); i++) {
             Text text = new Text("Path " + (i + 1));
-            setPathColorOnTextMouseOver(text, paths.get(i));
+            setPathColorOnTextMouseover(text, lines.get(i).toArray(new Line[0]));
             menu.getItems().add(new MenuItem("", text));
             final int j = i;
             ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
@@ -161,18 +141,21 @@ class Controller extends Pane {
                     FileChooser fileChooser = new FileChooser();
                     fileChooser.setTitle("Save Path");
                     fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-                    File destination = fileChooser.showSaveDialog(stage);
-                    if (destination != null) {
-                        try {
-                            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(destination));
-                            outputStream.writeObject(paths.get(j).toCoordArray());
-                        } catch (Exception e) {
-                            System.out.println("Error saving");
-                            e.printStackTrace();
+                    File file = fileChooser.showSaveDialog(new Stage());
+                    if (file != null) {
+                        if (paths.get(j).save(file)) {
+                            System.out.println("Saved path to " + file);
+                        } else {
+                            System.out.println("Error saving path to " + file);
                         }
+                    } else {
+                        System.out.println("Error saving path: file not found");
                     }
                 } else {
-                    paths.get(j).removeFromPane(this);
+                    for (Line line : lines.get(j)) {
+                        getChildren().remove(line);
+                    }
+                    lines.remove(j);
                     paths.remove(j);
                     addPathsToMenu(savePath, true);
                     addPathsToMenu(deletePath, false);
@@ -181,31 +164,146 @@ class Controller extends Pane {
         }
     }
 
-    private void endLine(Line line, double endX, double endY, double boundStartX, double boundStartY, double boundEndX, double boundEndY) {
-        if (endX < boundStartX) {
-            line.setEndX(boundStartX);
-        } else if (endX > boundEndX) {
-            line.setEndX(boundEndX);
-        } else {
-            line.setEndX(endX);
-        }
-        if (endY < boundStartY) {
-            line.setEndY(boundStartY);
-        } else if (endY > boundEndY) {
-            line.setEndY(boundEndY);
-        } else {
-            line.setEndY(endY);
+    private Object getLastInList(List list) {
+        return list.get(list.size() - 1);
+    }
+
+    // when the mouse goes over the text, the path becomes red, when the mouse leaves, the path goes back to black
+    private void setPathColorOnTextMouseover(Text text, ArrayList<ArrayList<Line>> listOfLines) {
+        for (ArrayList<Line> lines : listOfLines) {
+            setPathColorOnTextMouseover(text, lines.toArray(new Line[0]));
         }
     }
 
-    private void simplifyPath(Path path) {
-        for (int i = path.size() - 1; i > 0; i--) {
-            if (path.get(i).getSlope() == path.get(i - 1).getSlope()) {
-                path.get(i).setStartX(path.get(i - 1).getStartX());
-                path.get(i).setStartY(path.get(i - 1).getStartY());
-                getChildren().remove(path.get(i - 1));
-                path.remove(i - 1);
+    private void setPathColorOnTextMouseover(Text text, Line[] lines) {
+        text.setOnMouseEntered(event -> {
+            for (Line line : lines) {
+                line.toFront();
+                line.setStroke(Color.RED);
             }
+        });
+        text.setOnMouseExited(event -> {
+            for (Line line : lines) {
+                line.toFront();
+                line.setStroke(Color.BLACK);
+            }
+        });
+    }
+
+    private void startLine(MouseEvent event) {
+        if (!isCreatingPath) {
+            paths.add(new Path());
+            lines.add(new ArrayList<>());
+
+            pathNumber.setText(String.valueOf(paths.size()));
         }
+        paths.get(paths.size() - 1).add(event.getX(), event.getY());
+
+        // add the dot and the line
+        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
+        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(2f).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
+
+        //add them to the pane
+        getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 2));
+        getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
+
+        isCreatingPath = true;
+    }
+
+    private void setMode(boolean clickMode) {
+        if (clickMode) {
+            // reset the other mode
+            setOnMousePressed(event -> {
+            });
+            setOnMouseReleased(event -> {
+            });
+
+            setOnMouseClicked((MouseEvent event) -> {
+                if (isInNode(event.getX(), event.getY(), imageContainer)) {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        startLine(event);
+                    } else if (event.getButton() == MouseButton.SECONDARY && isCreatingPath) {
+                        paths.get(paths.size() - 1).add(event.getX(), event.getY());
+                        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
+                        getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
+                        isCreatingPath = false;
+                        addPathsToMenus();
+                    }
+                    currentPath.setText(String.valueOf(paths.get(paths.size() - 1).getLength()));
+                    numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
+                }
+            });
+
+            setOnMouseMoved(event -> {
+                if (isInNode(event.getX(), event.getY(), imageContainer) && isCreatingPath) {
+                    getChildren().remove(getChildren().size() - 1);
+                    lines.get(lines.size() - 1).remove(lines.get(lines.size() - 1).size() - 1);
+                    lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(2f).startX(paths.get(paths.size() - 1).getLast()[0]).startY(paths.get(paths.size() - 1).getLast()[1]).endX(event.getX()).endY(event.getY()).build());
+                    getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
+                }
+            });
+
+            setOnMouseDragged(getOnMouseMoved());
+        } else {
+            // reset the other mode
+            setOnMouseClicked(event -> {
+            });
+            setOnMouseMoved(event -> {
+            });
+
+            setOnMousePressed(event -> {
+                if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY) {
+                    startLine(event);
+                }
+            });
+
+            setOnMouseDragged(event -> {
+                if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY && isCreatingPath) {
+                    Line line = lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1);
+                    line.setEndX(event.getX());
+                    line.setEndY(event.getY());
+
+                    // add a new point. if the point is less than the minimum distance away from the last one, remove it and wait until the distance is long enough
+                    paths.get(paths.size() - 1).add(event.getX(), event.getY());
+                    if (paths.get(paths.size() - 1).getDistance(paths.get(paths.size() - 1).size() - 2, paths.get(paths.size() - 1).size() - 1) < minLineLength) {
+                        paths.get(paths.size() - 1).remove(paths.get(paths.size() - 1).size() - 1);
+                    } else {
+                        // add the dot and the line
+                        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
+                        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(2f).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
+
+                        // add them to the pane
+                        getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 2));
+                        getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
+
+                        numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
+                        currentPath.setText(String.valueOf(paths.get(paths.size() - 1).getLength()));
+                    }
+                }
+            });
+
+            setOnMouseReleased(event -> {
+                if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY && isCreatingPath) {
+                    // the latest path
+                    paths.get(paths.size() - 1).add(event.getX(), event.getY());
+                    Line line = lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1);
+                    line.setEndX(event.getX());
+                    line.setEndY(event.getY());
+
+                    lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
+                    getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
+
+                    numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
+                    currentPath.setText(String.valueOf(paths.get(paths.size() - 1).getLength()));
+
+                    isCreatingPath = false;
+                    addPathsToMenus();
+                }
+            });
+        }
+    }
+
+    private boolean isInNode(double x, double y, Node node) {
+        return x >= node.getLayoutX() && y >= node.getLayoutY() && x <= node.getBoundsInLocal().getWidth() && y <= node.getBoundsInLocal().getHeight();
     }
 }

@@ -42,47 +42,48 @@
             </Menu>
         </MenuBar>
         <ImageView fx:id="imageContainer" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER"
-                   GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.valignment="CENTER"
-                   GridPane.vgrow="NEVER">
+                   GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
             <Image fx:id="image" url="@resources/map.jpg"/>
         </ImageView>
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Length of current line: " GridPane.rowIndex="2">
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Path #" GridPane.rowIndex="2">
             <GridPane.margin>
                 <Insets left="5.0"/>
             </GridPane.margin>
         </Text>
-        <TextField fx:id="currentLine" disable="true" editable="false" maxHeight="1.7976931348623157E308"
-                   maxWidth="100.0" text="No line" GridPane.halignment="LEFT" GridPane.hgrow="NEVER"
+        <TextField fx:id="pathNumber" disable="true" editable="false" maxHeight="1.7976931348623157E308"
+                   maxWidth="100.0" text="No path" GridPane.halignment="LEFT" GridPane.hgrow="NEVER"
                    GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
             <GridPane.margin>
-                <Insets left="154.0"/>
+                <Insets left="50.0"/>
             </GridPane.margin>
         </TextField>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Length of current path: " GridPane.halignment="LEFT"
               GridPane.rowIndex="2" GridPane.valignment="CENTER">
             <GridPane.margin>
-                <Insets left="259.0"/>
+                <Insets left="155.0"/>
             </GridPane.margin>
         </Text>
         <TextField fx:id="currentPath" disable="true" editable="false" maxHeight="1.7976931348623157E308"
                    maxWidth="100.0" text="No path" GridPane.halignment="LEFT" GridPane.rowIndex="2"
                    GridPane.valignment="CENTER">
             <GridPane.margin>
-                <Insets left="414.0"/>
+                <Insets left="310.0"/>
             </GridPane.margin>
         </TextField>
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Lines in current path: " GridPane.halignment="LEFT"
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Points in current path: " GridPane.halignment="LEFT"
               GridPane.rowIndex="2" GridPane.valignment="CENTER">
             <GridPane.margin>
-                <Insets left="519.0"/>
+                <Insets left="415.0"/>
             </GridPane.margin>
         </Text>
-        <TextField fx:id="numberOfLines" disable="true" editable="false" maxHeight="1.7976931348623157E308"
+        <TextField fx:id="numberOfPoints" disable="true" editable="false" maxHeight="1.7976931348623157E308"
                    maxWidth="100.0" text="No path" GridPane.halignment="LEFT" GridPane.rowIndex="2"
                    GridPane.valignment="CENTER">
             <GridPane.margin>
-                <Insets left="660.0"/>
+                <Insets left="563.0"/>
             </GridPane.margin>
         </TextField>
+        <ChoiceBox fx:id="drawMode" prefWidth="150.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2"
+                   GridPane.valignment="CENTER"/>
     </GridPane>
 </fx:root>
