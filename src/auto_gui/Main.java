@@ -13,7 +13,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Controller controller = new Controller();
-        stage.setTitle("SciBorgs Java Autonomous GUI");
+        stage.setTitle("SciBorgs Java Autonomous GUI - Version 0.2.0");
         stage.setScene(new Scene(controller));
         stage.setResizable(false);
         stage.getIcons().add(new Image("auto_gui/resources/SciBorgs.png"));

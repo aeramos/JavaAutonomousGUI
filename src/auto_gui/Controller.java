@@ -96,7 +96,7 @@ class Controller extends Pane {
         about.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("About the SciBorgs Java Autonomous GUI");
-            alert.setHeaderText("SciBorgs Java Autonomous GUI");
+            alert.setHeaderText("SciBorgs Java Autonomous GUI\nVersion 0.2.0");
             alert.setContentText("The SciBorgs Java Autonomous GUI is a GUI for path generation. These paths will be followed by our " +
                     "robot during the Autonomous Period in the FIRST Robotics Competition.\n\n" +
                     "It mas made by Alejandro Ramos (aeramos on GitHub) for the SciBorgs robotics team (Team 1155)");
