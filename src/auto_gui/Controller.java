@@ -34,11 +34,12 @@ class Controller extends Pane {
     @FXML
     private MenuItem openPath, about;
     @FXML
-    private TextField pathNumber, currentPath, numberOfPoints;
+    private TextField pathNumber, currentPath, numberOfPoints, minimumLineLength;
+    @FXML
+    private Text minimumLineLengthLabel;
     @FXML
     private ChoiceBox drawMode;
 
-    private double minLineLength = 100;
     private boolean isCreatingPath = false;
 
     Controller() {
@@ -71,15 +72,26 @@ class Controller extends Pane {
             }
         });
 
-        drawMode.getItems().addAll("Click mode", "Drag mode");
+        drawMode.getItems().addAll("Click Mode", "Drag Mode");
         drawMode.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(0)) {
                 setMode(true);
+                minimumLineLength.setVisible(false);
+                minimumLineLengthLabel.setVisible(false);
             } else if (newValue.equals(1)) {
                 setMode(false);
+                minimumLineLength.setVisible(true);
+                minimumLineLengthLabel.setVisible(true);
             }
         });
         drawMode.getSelectionModel().select(0);
+
+        minimumLineLength.textProperty().addListener((observable, oldValue, newValue) -> {
+            // make sure we only take a numeric value
+            if (!newValue.matches("\\d*")) {
+                minimumLineLength.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
 
         about.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -265,7 +277,7 @@ class Controller extends Pane {
 
                     // add a new point. if the point is less than the minimum distance away from the last one, remove it and wait until the distance is long enough
                     paths.get(paths.size() - 1).add(event.getX(), event.getY());
-                    if (paths.get(paths.size() - 1).getDistance(paths.get(paths.size() - 1).size() - 2, paths.get(paths.size() - 1).size() - 1) < minLineLength) {
+                    if (paths.get(paths.size() - 1).getDistance(paths.get(paths.size() - 1).size() - 2, paths.get(paths.size() - 1).size() - 1) < Integer.parseInt(minimumLineLength.getText())) {
                         paths.get(paths.size() - 1).remove(paths.get(paths.size() - 1).size() - 1);
                     } else {
                         // add the dot and the line
