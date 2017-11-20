@@ -45,4 +45,18 @@ public class PortMap {
 
     public static final SPI.Port ACCEL_PORT = SPI.Port.kOnboard;
     public static final Accelerometer.Range ACCEL_RANGE = Accelerometer.Range.k16G;
+    
+    //**********ENCODERS**********//
+	public static final int DRIVETRAIN_FRONT_LEFT_ENCODER_A = 2;
+	public static final int DRIVETRAIN_FRONT_LEFT_ENCODER_B = 3;
+	public static final int DRIVETRAIN_FRONT_RIGHT_ENCODER_A = 0;
+	public static final int DRIVETRAIN_FRONT_RIGHT_ENCODER_B = 1;
+	public static final int DRIVETRAIN_REAR_LEFT_ENCODER_A = 4;
+	public static final int DRIVETRAIN_REAR_LEFT_ENCODER_B = 5;
+	public static final int DRIVETRAIN_REAR_RIGHT_ENCODER_A = 6;
+	public static final int DRIVETRAIN_REAR_RIGHT_ENCODER_B = 7;
+	
+	//**********OTHER CONSTANTS**********//
+	public static final double DRIVETRAIN_WHEELS_REV_PER_TICK = 1.0 / 2048.0;
+	public static final double DRIVETRAIN_WHEELS_RADIUS_FT = 1.0 / 6.0;
 }

@@ -102,9 +102,9 @@ public class Robot extends IterativeRobot {
         }
 
         plane.updatePosition();
-
-        SmartDashboard.putNumber("DB/getX", plane.getX());
-        SmartDashboard.putNumber("DB/getY", plane.getY());
+        plane.update();
+        SmartDashboard.putNumber("DB/getX", plane.getFwdRevDistFt());
+        SmartDashboard.putNumber("DB/getY", plane.getStrafeDistFt);
     }
 
     @Override

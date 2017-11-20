@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import org.usfirst.frc.team1155.robot.PortMap;
 import org.usfirst.frc.team1155.robot.Robot;
+import org.usfirst.frc.team1736.lib.SignalMath.AveragingFilter;
 
 public class DriveSubsystem extends PIDSubsystem {
     public static final int WHEEL_RADIUS = 2;
@@ -19,6 +20,22 @@ public class DriveSubsystem extends PIDSubsystem {
     private CANTalon frontRightMotor;
     private CANTalon backLeftMotor;
     private CANTalon backRightMotor;
+
+	private Encoder frontLeftEncoder;
+	private Encoder frontRightEncoder;
+	private Encoder rearLeftEncoder;
+	private Encoder rearRightEncoder;
+	
+
+	private AveragingFilter FL_encoder_filt;
+	private AveragingFilter FR_encoder_filt;
+	private AveragingFilter RL_encoder_filt;
+	private AveragingFilter RR_encoder_filt;
+	
+	private double FLEncoderSpeed;
+	private double FREncoderSpeed;
+	private double RLEncoderSpeed;
+	private double RREncoderSpeed;
 
     public DriveSubsystem() {
         super("Drive", 1.0, 0.1, 0.1);
@@ -37,6 +54,22 @@ public class DriveSubsystem extends PIDSubsystem {
 
         getPIDController().setContinuous(true);
         getPIDController().setPercentTolerance(20.0);
+        
+		FL_encoder_filt = new AveragingFilter(3,0.0);
+		FR_encoder_filt = new AveragingFilter(3,0.0);
+		RL_encoder_filt = new AveragingFilter(3,0.0);
+		RR_encoder_filt = new AveragingFilter(3,0.0);
+		
+		// set up encoders
+		frontLeftEncoder = new Encoder(PortMap.DRIVETRAIN_FRONT_LEFT_ENCODER_A, PortMap.DRIVETRAIN_FRONT_LEFT_ENCODER_B, false);
+		frontRightEncoder = new Encoder(PortMap.DRIVETRAIN_FRONT_RIGHT_ENCODER_A, PortMap.DRIVETRAIN_FRONT_RIGHT_ENCODER_B, false);
+		rearLeftEncoder = new Encoder(PortMap.DRIVETRAIN_REAR_LEFT_ENCODER_A, PortMap.DRIVETRAIN_REAR_LEFT_ENCODER_B, false);
+		rearRightEncoder = new Encoder(PortMap.DRIVETRAIN_REAR_RIGHT_ENCODER_A, PortMap.DRIVETRAIN_REAR_RIGHT_ENCODER_B, false);
+		
+		frontLeftEncoder.setDistancePerPulse(PortMap.DRIVETRAIN_WHEELS_REV_PER_TICK);
+		frontRightEncoder.setDistancePerPulse(-PortMap.DRIVETRAIN_WHEELS_REV_PER_TICK);
+		rearLeftEncoder.setDistancePerPulse(PortMap.DRIVETRAIN_WHEELS_REV_PER_TICK);
+		rearRightEncoder.setDistancePerPulse(-PortMap.DRIVETRAIN_WHEELS_REV_PER_TICK);
     }
 
     // call this normally
@@ -178,6 +211,53 @@ public class DriveSubsystem extends PIDSubsystem {
             backRightMotor.pidWrite(-output);
         }
     }
+    
+	public void resetAllEncoders() {
+		frontLeftEncoder.reset();
+		frontRightEncoder.reset();
+		rearLeftEncoder.reset();
+		rearRightEncoder.reset();
+	}
+	
+	public void updateEncoderSpeeds(){
+		FLEncoderSpeed =  FL_encoder_filt.filter(frontLeftEncoder.getRate()) ;
+		FREncoderSpeed =  FR_encoder_filt.filter(frontRightEncoder.getRate()) ;
+		RLEncoderSpeed =  RL_encoder_filt.filter(rearLeftEncoder.getRate()) ;
+		RREncoderSpeed =  RR_encoder_filt.filter(rearRightEncoder.getRate()) ;
+	}
+	
+	public double getFrontLeftWheelDistanceFt() {
+		return frontLeftEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+	}
+
+	public double getFrontRightWheelDistanceFt() {
+		return frontRightEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+	}
+
+	public double getRearLeftWheelDistanceFt() {
+		return rearLeftEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+	}
+
+	public double getRearRightWheelDistanceFt() {
+		return rearRightEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+	}
+	
+
+	public double getFrontLeftWheelSpeedRPM() {
+		return FLEncoderSpeed * 60.0;
+	}
+
+	public double getFrontRightWheelSpeedRPM() {
+		return FREncoderSpeed * 60.0;
+	}
+
+	public double getRearLeftWheelSpeedRPM() {
+		return RLEncoderSpeed * 60.0;
+	}
+
+	public double getRearRightWheelSpeedRPM() {
+		return RREncoderSpeed* 60.0;
+	}
 
     public enum DriveMode {
         MECANUM, TANK, TURN_FRONT, TURN_BACK
@@ -186,4 +266,5 @@ public class DriveSubsystem extends PIDSubsystem {
     public enum SensorMode {
         ENCODER, GYRO
     }
+
 }
