@@ -42,7 +42,7 @@ class Controller extends Pane {
 
     private boolean isCreatingPath = false;
 
-    Controller() {
+    Controller(final String version) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXML.fxml"));
         fxmlLoader.setController(this);
         fxmlLoader.setRoot(this);
@@ -89,14 +89,25 @@ class Controller extends Pane {
         minimumLineLength.textProperty().addListener((observable, oldValue, newValue) -> {
             // make sure we only take a numeric value
             if (!newValue.matches("\\d*")) {
-                minimumLineLength.setText(newValue.replaceAll("[^\\d]", ""));
+                newValue.replaceAll("[^\\d]", "");
             }
+
+            // remove leading zeros
+            while (newValue.length() > 0 && newValue.charAt(0) == '0') {
+                newValue = newValue.substring(1);
+            }
+
+            // if the string is empty,
+            if (newValue.length() == 0) {
+                newValue = "0";
+            }
+            minimumLineLength.setText(newValue);
         });
 
         about.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("About the SciBorgs Java Autonomous GUI");
-            alert.setHeaderText("SciBorgs Java Autonomous GUI\nVersion 0.2.0");
+            alert.setHeaderText("SciBorgs Java Autonomous GUI\nVersion " + version);
             alert.setContentText("The SciBorgs Java Autonomous GUI is a GUI for path generation. These paths will be followed by our " +
                     "robot during the Autonomous Period in the FIRST Robotics Competition.\n\n" +
                     "It mas made by Alejandro Ramos (aeramos on GitHub) for the SciBorgs robotics team (Team 1155)");
@@ -241,7 +252,7 @@ class Controller extends Pane {
                         isCreatingPath = false;
                         addPathsToMenus();
                     }
-                    currentPath.setText(String.valueOf(paths.get(paths.size() - 1).getLength()));
+                    currentPath.setText(String.valueOf(Math.round(paths.get(paths.size() - 1).getLength() * 100f) / 100f));
                     numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
                 }
             });
@@ -289,7 +300,7 @@ class Controller extends Pane {
                         getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
 
                         numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
-                        currentPath.setText(String.valueOf(paths.get(paths.size() - 1).getLength()));
+                        currentPath.setText(String.valueOf(Math.round(paths.get(paths.size() - 1).getLength() * 100f) / 100f));
                     }
                 }
             });
@@ -306,7 +317,7 @@ class Controller extends Pane {
                     getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
 
                     numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
-                    currentPath.setText(String.valueOf(paths.get(paths.size() - 1).getLength()));
+                    currentPath.setText(String.valueOf(Math.round(paths.get(paths.size() - 1).getLength() * 100f) / 100f));
 
                     isCreatingPath = false;
                     addPathsToMenus();
