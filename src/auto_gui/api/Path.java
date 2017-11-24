@@ -9,13 +9,13 @@ import java.util.ArrayList;
  * @author Alejandro Ramos
  */
 public class Path implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1;
 
-    private ArrayList<Double> x = new ArrayList<>();
-    private ArrayList<Double> y = new ArrayList<>();
+    private ArrayList<Integer> x = new ArrayList<>();
+    private ArrayList<Integer> y = new ArrayList<>();
 
     /**
-     * Creates a new, empty path.
+     * Creates a new, empty Path.
      */
     public Path() {
     }
@@ -38,7 +38,7 @@ public class Path implements Serializable {
      * @param x the first x coordinate
      * @param y the first y coordinate
      */
-    public Path(double x, double y) {
+    public Path(int x, int y) {
         add(x, y);
     }
 
@@ -47,7 +47,7 @@ public class Path implements Serializable {
      *
      * @param xy a coordinate array in which xy[0] has the x coordinates and xy[1] has the y coordinates
      */
-    public Path(double[][] xy) {
+    public Path(int[][] xy) {
         add(xy);
     }
 
@@ -64,22 +64,60 @@ public class Path implements Serializable {
     }
 
     /**
-     * Adds the given coordinate to the Path.
+     * Returns a {@link String} representation of this Path in an easily readable way.
+     * The String is split into two lines to easily compare the x and y values of each coordinate.
+     *
+     * @return String representation of this Path
+     */
+    @Override
+    public String toString() {
+        StringBuilder xString = new StringBuilder("Path{x=[");
+        StringBuilder yString = new StringBuilder("y=[");
+        for (int i = 0; i < this.size(); i++) {
+            xString.append(x.get(i));
+            yString.append(y.get(i));
+
+            // don't need commas and stuff if this is the last coordinate
+            if (i < this.size() - 1) {
+                xString.append(", ");
+                yString.append(", ");
+
+                int xLength = x.get(i).toString().length();
+                int yLength = y.get(i).toString().length();
+
+                // align the string so that each new coordinate starts at the same point for x and y
+                if (xLength > yLength) {
+                    for (int j = 0; j < xLength - yLength; j++) {
+                        yString.append(" ");
+                    }
+                }
+                if (yLength > xLength) {
+                    for (int j = 0; j < yLength - xLength; j++) {
+                        xString.append(" ");
+                    }
+                }
+            }
+        }
+        return xString + "],\n" + "     " + yString + "]}";
+    }
+
+    /**
+     * Adds the given coordinate to this Path.
      *
      * @param x the x coordinate value
      * @param y the y coordinate value
      */
-    public void add(double x, double y) {
+    public void add(int x, int y) {
         this.x.add(x);
         this.y.add(y);
     }
 
     /**
-     * Adds the given coordinates to the Path.
+     * Adds the given coordinates to this Path.
      *
      * @param xy a coordinate array in which xy[0] has the x coordinates and xy[1] has the y coordinates
      */
-    public void add(double[][] xy) {
+    public void add(int[][] xy) {
         for (int i = 0; i < xy.length; i++) {
             this.add(xy[i][0], xy[i][1]);
         }
@@ -89,31 +127,31 @@ public class Path implements Serializable {
      * Gets the coordinate at the given index.
      *
      * <p>
-     * If the index is out of the bounds of the current path, this method returns <code>null</code>.
+     * If the index is out of the bounds of this Path, this method returns <code>null</code>.
      *
      * @param index the index of the coordinate to get
-     * @return a <code>double[]</code> coordinate value in which [0] is the x value and [1] is the y value
+     * @return a <code>int[]</code> coordinate value in which [0] is the x value and [1] is the y value
      */
-    public double[] get(int index) {
+    public int[] get(int index) {
         if (index < x.size() && index >= 0) {
-            return new double[]{x.get(index), y.get(index)};
+            return new int[]{x.get(index), y.get(index)};
         } else {
             return null;
         }
     }
 
     /**
-     * Returns the last coordinate in this path.
+     * Returns the last coordinate in this Path.
      *
      * <p>
-     * The coordinate is given in a <code>double[]</code> where the 0th index is the x value, and the 1st index is the y value.
+     * The coordinate is given in a <code>int[]</code> where the 0th index is the x value, and the 1st index is the y value.
      *
      * <p>
-     * If there are no coordinates in this path, returns <code>null</code>.
+     * If there are no coordinates in this Path, returns <code>null</code>.
      *
-     * @return the coordinate
+     * @return the last coordinate in this Path
      */
-    public double[] getLast() {
+    public int[] getLast() {
         if (this.size() > 0) {
             return get(this.size() - 1);
         } else {
@@ -125,7 +163,7 @@ public class Path implements Serializable {
      * Removes the coordinate at the specified index.
      *
      * <p>
-     * If the given index is out of the bounds of the current path, this command does nothing.
+     * If the given index is out of the bounds of the current Path, this command does nothing.
      *
      * @param index the index of the coordinate to remove
      */
@@ -137,7 +175,7 @@ public class Path implements Serializable {
     }
 
     /**
-     * Sets this {@link Path} to the given Path.
+     * Sets this Path to the given Path.
      *
      * <p>
      * If the given Path is <code>null</code>, this method does nothing.
@@ -154,9 +192,9 @@ public class Path implements Serializable {
     }
 
     /**
-     * Saves this {@link Path} to the specified {@link File}.
+     * Saves this Path to the specified {@link File}.
      *
-     * @param file the file to save this path to
+     * @param file the file to save this Path to
      * @return if the operation was successful or not
      */
     public boolean save(File file) {
@@ -169,9 +207,9 @@ public class Path implements Serializable {
     }
 
     /**
-     * Sets this {@link Path} to the path at the specified {@link File}.
+     * Sets this Path to the Path at the specified {@link File}.
      *
-     * @param file the path file
+     * @param file the Path file
      * @return if the operation was successful or not
      */
     public boolean load(File file) {
@@ -179,10 +217,10 @@ public class Path implements Serializable {
             Path path;
             try {
                 path = (Path)new ObjectInputStream(new FileInputStream(file)).readObject();
+                this.set(path);
             } catch (Exception e) {
                 return false;
             }
-            this.set(path);
             return true;
         } else {
             return false;
@@ -190,7 +228,7 @@ public class Path implements Serializable {
     }
 
     /**
-     * Clears this {@link Path} of all its coordinates.
+     * Clears this Path of all its coordinates.
      */
     public void clear() {
         x.clear();
@@ -198,18 +236,18 @@ public class Path implements Serializable {
     }
 
     /**
-     * Gets the size of this {@link Path}.
+     * Gets the size of this Path.
      *
-     * @return the size of this {@link Path}
+     * @return the size of this Path
      */
     public int size() {
         return x.size();
     }
 
     /**
-     * Gets the length of this {@link Path}.
+     * Gets the length of this Path.
      *
-     * @return the length of this {@link Path}
+     * @return the length of this Path
      */
     public double getLength() {
         double length = 0;

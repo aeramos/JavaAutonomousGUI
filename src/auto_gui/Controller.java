@@ -89,15 +89,15 @@ class Controller extends Pane {
         minimumLineLength.textProperty().addListener((observable, oldValue, newValue) -> {
             // make sure we only take a numeric value
             if (!newValue.matches("\\d*")) {
-                newValue.replaceAll("[^\\d]", "");
+                newValue = newValue.replaceAll("[^\\d]", "");
             }
 
             // remove leading zeros
-            while (newValue.length() > 0 && newValue.charAt(0) == '0') {
+            while (newValue.length() > 1 && newValue.charAt(0) == '0') {
                 newValue = newValue.substring(1);
             }
 
-            // if the string is empty,
+            // if the string is empty, add a 0
             if (newValue.length() == 0) {
                 newValue = "0";
             }
@@ -220,7 +220,7 @@ class Controller extends Pane {
 
             pathNumber.setText(String.valueOf(paths.size()));
         }
-        paths.get(paths.size() - 1).add(event.getX(), event.getY());
+        paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
 
         // add the dot and the line
         lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
@@ -246,7 +246,7 @@ class Controller extends Pane {
                     if (event.getButton() == MouseButton.PRIMARY) {
                         startLine(event);
                     } else if (event.getButton() == MouseButton.SECONDARY && isCreatingPath) {
-                        paths.get(paths.size() - 1).add(event.getX(), event.getY());
+                        paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
                         lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
                         getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
                         isCreatingPath = false;
@@ -287,7 +287,7 @@ class Controller extends Pane {
                     line.setEndY(event.getY());
 
                     // add a new point. if the point is less than the minimum distance away from the last one, remove it and wait until the distance is long enough
-                    paths.get(paths.size() - 1).add(event.getX(), event.getY());
+                    paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
                     if (paths.get(paths.size() - 1).getDistance(paths.get(paths.size() - 1).size() - 2, paths.get(paths.size() - 1).size() - 1) < Integer.parseInt(minimumLineLength.getText())) {
                         paths.get(paths.size() - 1).remove(paths.get(paths.size() - 1).size() - 1);
                     } else {
@@ -308,7 +308,7 @@ class Controller extends Pane {
             setOnMouseReleased(event -> {
                 if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY && isCreatingPath) {
                     // the latest path
-                    paths.get(paths.size() - 1).add(event.getX(), event.getY());
+                    paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
                     Line line = lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1);
                     line.setEndX(event.getX());
                     line.setEndY(event.getY());
