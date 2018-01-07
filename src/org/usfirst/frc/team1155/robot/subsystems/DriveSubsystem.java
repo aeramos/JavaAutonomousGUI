@@ -3,11 +3,12 @@ package org.usfirst.frc.team1155.robot.subsystems;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import org.usfirst.frc.team1155.robot.PortMap;
 import org.usfirst.frc.team1155.robot.Robot;
-import org.usfirst.frc.team1736.lib.SignalMath.AveragingFilter;
+import org.usfirst.frc.team1155.robot.AveragingFilter;
 
 public class DriveSubsystem extends PIDSubsystem {
     public static final int WHEEL_RADIUS = 2;
@@ -21,10 +22,10 @@ public class DriveSubsystem extends PIDSubsystem {
     private CANTalon backLeftMotor;
     private CANTalon backRightMotor;
 
-	private Encoder frontLeftEncoder;
-	private Encoder frontRightEncoder;
-	private Encoder rearLeftEncoder;
-	private Encoder rearRightEncoder;
+	public Encoder frontLeftEncoder;
+	public Encoder frontRightEncoder;
+	public Encoder rearLeftEncoder;
+	public Encoder rearRightEncoder;
 	
 
 	private AveragingFilter FL_encoder_filt;
@@ -227,19 +228,19 @@ public class DriveSubsystem extends PIDSubsystem {
 	}
 	
 	public double getFrontLeftWheelDistanceFt() {
-		return frontLeftEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+		return frontLeftEncoder.getDistance() * 2.0 * Math.PI * PortMap.DRIVETRAIN_WHEELS_RADIUS_FT;
 	}
 
 	public double getFrontRightWheelDistanceFt() {
-		return frontRightEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+		return frontRightEncoder.getDistance() * 2.0 * Math.PI * PortMap.DRIVETRAIN_WHEELS_RADIUS_FT;
 	}
 
 	public double getRearLeftWheelDistanceFt() {
-		return rearLeftEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+		return rearLeftEncoder.getDistance() * 2.0 * Math.PI * PortMap.DRIVETRAIN_WHEELS_RADIUS_FT;
 	}
 
 	public double getRearRightWheelDistanceFt() {
-		return rearRightEncoder.getDistance() * 2.0 * Math.PI * RobotConstants.DRIVETRAIN_WHEELS_RADIUS_FT;
+		return rearRightEncoder.getDistance() * 2.0 * Math.PI * PortMap.DRIVETRAIN_WHEELS_RADIUS_FT;
 	}
 	
 

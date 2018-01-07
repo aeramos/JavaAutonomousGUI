@@ -1,7 +1,10 @@
 package org.usfirst.frc.team1155.robot;
 
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class PortMap {
     //****************JOYSTICKS*******************//
@@ -42,9 +45,11 @@ public class PortMap {
     public static final int RIGHT_CLIMBER_TALON = 4;
 
     //***********SENSORS***********//
+    Gyro gyro = new edu.wpi.first.wpilibj.ADXRS450_Gyro();
+    Accelerometer accelerometer = new edu.wpi.first.wpilibj.ADXL362(ACCEL_PORT, ACCEL_RANGE);
 
-    public static final SPI.Port ACCEL_PORT = SPI.Port.kOnboard;
-    public static final Accelerometer.Range ACCEL_RANGE = Accelerometer.Range.k16G;
+    public static final edu.wpi.first.wpilibj.SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS0;
+    public static final Accelerometer.Range ACCEL_RANGE = Accelerometer.Range.k8G;
     
     //**********ENCODERS**********//
 	public static final int DRIVETRAIN_FRONT_LEFT_ENCODER_A = 2;

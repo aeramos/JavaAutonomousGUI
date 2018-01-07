@@ -2,6 +2,7 @@ package org.usfirst.frc.team1155.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1155.robot.commands.TankDriveCommand;
@@ -22,7 +23,7 @@ public class Robot extends IterativeRobot {
     private static SmartDashboard smart;
     private static OI oi;
     private static DesCartesianPlane plane;
-    private static ADXL345_SPI accelerometer;
+    private static ADXL362 accelerometer;
     private static Compressor compressor;
     private Timer timer;
 
@@ -30,7 +31,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         timer = new Timer();
         gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
-        accelerometer = new ADXL345_SPI(PortMap.ACCEL_PORT, PortMap.ACCEL_RANGE);
+        accelerometer = new ADXL362(PortMap.ACCEL_PORT,PortMap.ACCEL_RANGE);
         smart = new SmartDashboard();
 
         plane = new DesCartesianPlane(timer, gyro, accelerometer);
@@ -99,12 +100,14 @@ public class Robot extends IterativeRobot {
             compressor.stop();
         } else if (!compressor.enabled()) {
             compressor.start();
-        }
+        }	
 
         plane.updatePosition();
         plane.update();
         SmartDashboard.putNumber("DB/getX", plane.getFwdRevDistFt());
-        SmartDashboard.putNumber("DB/getY", plane.getStrafeDistFt);
+        SmartDashboard.putNumber("DB/getY", plane.getStrafeDistFt());
+        SmartDashboard.putNumber("DB/getXAccel", plane.accelerometer.getX());
+        SmartDashboard.putNumber("DB/getYAccel", plane.accelerometer.getY());
     }
 
     @Override

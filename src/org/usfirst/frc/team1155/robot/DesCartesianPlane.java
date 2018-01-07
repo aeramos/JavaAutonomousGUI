@@ -1,6 +1,9 @@
 package org.usfirst.frc.team1155.robot;
 
+import org.usfirst.frc.team1155.robot.subsystems.DriveSubsystem;
+
 import edu.wpi.first.wpilibj.ADXL345_SPI;
+import edu.wpi.first.wpilibj.ADXL362;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,9 +18,9 @@ class DesCartesianPlane {
     private double prevAx = 0;
     private double prevAy = 0;
     private ADXRS450_Gyro gyro;
-    private ADXL345_SPI accelerometer;
+    public ADXL362 accelerometer;
 
-    DesCartesianPlane(Timer timer, ADXRS450_Gyro gyro, ADXL345_SPI accelerometer) {
+    DesCartesianPlane(Timer timer, ADXRS450_Gyro gyro, ADXL362 accelerometer) {
         this.timer = timer;
         this.gyro = gyro;
         this.accelerometer = accelerometer;
@@ -93,14 +96,20 @@ class DesCartesianPlane {
 		wheelSpeedDos = dt.getFrontRightWheelSpeedRPM() * 2.0 * Math.PI / 60;
 		wheelSpeedTres = dt.getRearLeftWheelSpeedRPM() * 2.0 * Math.PI / 60;
 		wheelSpeedCuatro = dt.getRearRightWheelSpeedRPM() * 2.0 * Math.PI / 60;
-
+		
+		SmartDashboard.putNumber("DB/wheelSpeed1", wheelSpeedOno);
+		SmartDashboard.putNumber("DB/speed2", wheelSpeedDos);
+		SmartDashboard.putNumber("DB/speed3", wheelSpeedTres);
+		SmartDashboard.putNumber("DB/speed4", wheelSpeedCuatro);
+		
 		// Calculate translational velocity x/y components via inverse mechanum kinematic equations
 		Vx = (wheelSpeedOno + wheelSpeedDos + wheelSpeedTres + wheelSpeedCuatro) * PortMap.DRIVETRAIN_WHEELS_RADIUS_FT /*wheel radius in feet*/ / 4;
 		Vy = (wheelSpeedOno - wheelSpeedDos + wheelSpeedTres - wheelSpeedCuatro) * PortMap.DRIVETRAIN_WHEELS_RADIUS_FT /*wheel radius in feet*/ / 4;
-
+		SmartDashboard.putNumber("DB/tvx", Vx);
+		SmartDashboard.putNumber("DB/tvy", Vy);
 		// Calculate net speed vector with pythagorean theorem
 		netSpeed = Math.sqrt(Vx * Vx + Vy * Vy);
-
+		SmartDashboard.putNumber("DB/netSpeed", netSpeed);
 		// Store results into state variables
 		fwdRevVel = Vx;
 		strafeVel = Vy;
@@ -113,12 +122,15 @@ class DesCartesianPlane {
 				dt.getFrontRightWheelDistanceFt() +
 				dt.getRearLeftWheelDistanceFt() +
 				dt.getRearRightWheelDistanceFt()) / 4.0;
+		SmartDashboard.putNumber("DB/xDist", fwdRevDist);
 		strafeDist = (dt.getFrontLeftWheelDistanceFt() -
 				dt.getFrontRightWheelDistanceFt() +
 				dt.getRearLeftWheelDistanceFt() -
 				dt.getRearRightWheelDistanceFt()) / 4.0;
+		SmartDashboard.putNumber("DB/yDist", strafeDist);
 
 		netDist += netSpeed * 0.02; // meh, just a guess at sample time. This isn't used for anything now that I know of.
+		SmartDashboard.putNumber("DB/Dist", netDist);
 	}
 
 	public double getNetSpeedFtPerS() {
