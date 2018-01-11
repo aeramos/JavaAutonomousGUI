@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1155.robot.subsystems;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
@@ -15,18 +15,18 @@ public class DriveSubsystem extends PIDSubsystem {
     private static DriveMode driveMode;
     public boolean angleDrive = false;
     public SensorMode sensorMode;
-    private CANTalon frontLeftMotor;
-    private CANTalon frontRightMotor;
-    private CANTalon backLeftMotor;
-    private CANTalon backRightMotor;
+    private TalonSRX frontLeftMotor;
+    private TalonSRX frontRightMotor;
+    private TalonSRX backLeftMotor;
+    private TalonSRX backRightMotor;
 
     public DriveSubsystem() {
         super("Drive", 1.0, 0.1, 0.1);
 
-        frontLeftMotor = new CANTalon(PortMap.DRIVE_FRONT_LEFT_TALON);
-        frontRightMotor = new CANTalon(PortMap.DRIVE_FRONT_RIGHT_TALON);
-        backLeftMotor = new CANTalon(PortMap.DRIVE_BACK_LEFT_TALON);
-        backRightMotor = new CANTalon(PortMap.DRIVE_BACK_RIGHT_TALON);
+        frontLeftMotor = new TalonSRX(PortMap.DRIVE_FRONT_LEFT_TALON);
+        frontRightMotor = new TalonSRX(PortMap.DRIVE_FRONT_RIGHT_TALON);
+        backLeftMotor = new TalonSRX(PortMap.DRIVE_BACK_LEFT_TALON);
+        backRightMotor = new TalonSRX(PortMap.DRIVE_BACK_RIGHT_TALON);
 
         frontPivots = new DoubleSolenoid(PortMap.DRIVE_RIGHT_PISTONS[0], PortMap.DRIVE_RIGHT_PISTONS[1]);
         backPivots = new DoubleSolenoid(PortMap.DRIVE_LEFT_PISTONS[0], PortMap.DRIVE_LEFT_PISTONS[1]);
@@ -63,10 +63,10 @@ public class DriveSubsystem extends PIDSubsystem {
         if (angleDrive) {
             return;
         }
-        frontRightMotor.set(rightVal);
-        frontLeftMotor.set(-leftVal);
-        backRightMotor.set(rightVal);
-        backLeftMotor.set(-leftVal);
+        frontRightMotor.set(ControlMode.PercentOutput, rightVal);
+        frontLeftMotor.set(ControlMode.PercentOutput, -leftVal);
+        backRightMotor.set(ControlMode.PercentOutput, rightVal);
+        backLeftMotor.set(ControlMode.PercentOutput, -leftVal);
     }
 
     // call this to force mecanum drive
@@ -78,10 +78,10 @@ public class DriveSubsystem extends PIDSubsystem {
         // yVal = -yVal;
         rotationalVal = -rotationalVal;
 
-        frontLeftMotor.set(-xVal - yVal + rotationalVal);
-        frontRightMotor.set(-xVal + yVal + rotationalVal);
-        backLeftMotor.set(xVal - yVal + rotationalVal);
-        backRightMotor.set(xVal + yVal + rotationalVal);
+        frontLeftMotor.set(ControlMode.PercentOutput, -xVal - yVal + rotationalVal);
+        frontRightMotor.set(ControlMode.PercentOutput, -xVal + yVal + rotationalVal);
+        backLeftMotor.set(ControlMode.PercentOutput, xVal - yVal + rotationalVal);
+        backRightMotor.set(ControlMode.PercentOutput, xVal + yVal + rotationalVal);
     }
 
     public void moveDegrees(double degrees) {
@@ -94,10 +94,10 @@ public class DriveSubsystem extends PIDSubsystem {
 
         System.out.println(xVal + " " + yVal + " " + degrees);
 
-        frontLeftMotor.set(-xVal - yVal);
-        frontRightMotor.set(-xVal + yVal);
-        backLeftMotor.set(xVal - yVal);
-        backRightMotor.set(xVal + yVal);
+        frontLeftMotor.set(ControlMode.PercentOutput, -xVal - yVal);
+        frontRightMotor.set(ControlMode.PercentOutput, -xVal + yVal);
+        backLeftMotor.set(ControlMode.PercentOutput, xVal - yVal);
+        backRightMotor.set(ControlMode.PercentOutput, xVal + yVal);
     }
 
     public DriveMode getDriveMode() {
@@ -123,8 +123,8 @@ public class DriveSubsystem extends PIDSubsystem {
     }
 
     public void resetEncoders() {
-        frontLeftMotor.setEncPosition(0);
-        frontRightMotor.setEncPosition(0);
+        frontLeftMotor.getSensorCollection(). setQuadraturePosition (0, 10);
+        frontRightMotor.getSensorCollection(). setQuadraturePosition (0, 10);
     }
 
     public double getEncDistance() {
