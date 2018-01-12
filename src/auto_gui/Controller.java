@@ -84,7 +84,7 @@ class Controller extends Pane {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 0, 1, TimeUnit.MILLISECONDS);
+        }, 0, 500, TimeUnit.MILLISECONDS);
 
         openPath.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
@@ -142,6 +142,7 @@ class Controller extends Pane {
             alert.setHeaderText("SciBorgs Java Autonomous GUI\nVersion " + version);
             alert.setContentText("The SciBorgs Java Autonomous GUI is a GUI for path generation. These paths will be followed by our " +
                     "robot during the Autonomous Period in the FIRST Robotics Competition.\n\n" +
+                    "It also has the capability to get realtime coordinates of the robot while it drives and represent these on the map.\n\n" +
                     "It mas made by Alejandro Ramos (aeramos on GitHub) for the SciBorgs robotics team (Team 1155)");
             ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("auto_gui/resources/SciBorgs.png"));
             alert.showAndWait();
