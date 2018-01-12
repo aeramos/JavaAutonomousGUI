@@ -14,7 +14,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         final String version = "0.2.2";
 
-        Controller controller = new Controller(version);
+        Controller controller = new Controller(stage, version);
         stage.setTitle("SciBorgs Java Autonomous GUI - Version " + version);
         stage.setScene(new Scene(controller));
         stage.setResizable(false);

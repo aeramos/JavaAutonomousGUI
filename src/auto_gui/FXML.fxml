@@ -43,7 +43,7 @@
         </MenuBar>
         <ImageView fx:id="imageContainer" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER"
                    GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-            <Image fx:id="image" url="@resources/map.jpg" />
+            <Image fx:id="image" url="@resources/map.png" />
         </ImageView>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Path #" GridPane.rowIndex="2">
             <GridPane.margin>
