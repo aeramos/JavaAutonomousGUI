@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -25,41 +24,27 @@ public class Server {
 
     public Server() throws IOException {
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
-
         serverSocket = new ServerSocket(PORT);
-        scheduledExecutorService.schedule(() -> {
+
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            // check data sent to server
             try {
-                try {
-                    System.out.println("Waiting for new connection...");
+                coordinates = (int[])inputStream.readObject();
+            } catch (SocketException | NullPointerException e) {
+                if (!closed) {
+                    System.out.println("Socket connection closed, reopening...");
                     connect();
-                } catch (Exception | Error e) {
-                    System.out.println("Unexpected error");
-                    e.printStackTrace();
-                    close();
                 }
-            } catch (Exception | Error ignored) {
+            } catch (EOFException e) {
+                System.out.println("No more data to read from socket");
+            } catch (ClassCastException e) {
+                System.out.println("Error - the data is not of type: int[]");
+            } catch (Exception | Error e) {
+                System.out.println("Unexpected error, shutting down");
+                e.printStackTrace();
+                close();
             }
-            scheduledExecutorService.scheduleAtFixedRate(() -> {
-                // check data sent to server
-                try {
-                    coordinates = (int[])inputStream.readObject();
-                    System.out.println("new coordinate value: " + Arrays.toString(coordinates));
-                } catch (SocketException e) {
-                    if (!closed) {
-                        System.out.println("Socket connection closed, reopening...");
-                        connect();
-                    }
-                } catch (EOFException e) {
-                    System.out.println("No more data to read from socket");
-                } catch (ClassCastException | NullPointerException e) {
-                    System.out.println("Error - the data is not of type: int[]");
-                } catch (Exception | Error e) {
-                    System.out.println("Unexpected error, shutting down");
-                    e.printStackTrace();
-                    close();
-                }
-            }, 0, 1, TimeUnit.NANOSECONDS);
-        }, 0, TimeUnit.SECONDS);
+        }, 0, 1, TimeUnit.NANOSECONDS); // poll constantly
     }
 
     private void connect() {
@@ -71,8 +56,7 @@ public class Server {
             }
             try {
                 socket = serverSocket.accept();
-            } catch (IOException ignored) {
-                // thrown if close() is called while waiting here
+            } catch (SocketException ignored) { // thrown if close() is called while waiting here
             }
             if (socket != null && !socket.isClosed()) {
                 inputStream = new ObjectInputStream(socket.getInputStream());
