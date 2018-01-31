@@ -1,6 +1,7 @@
 package auto_gui;
 
 import auto_gui.api.Path;
+import auto_gui.api.Position;
 import auto_gui.realtime.Server;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -76,11 +77,11 @@ class Controller extends Pane {
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
         scheduledExecutorService.scheduleAtFixedRate(() -> {
             try {
-                int[] coordinates = server.getCoordinates();
-                robot.setStartX(coordinates[0]);
-                robot.setEndX(coordinates[0]);
-                robot.setStartY(coordinates[1]);
-                robot.setEndY(coordinates[1]);
+                Position position = server.getPosition();
+                robot.setStartX(position.getX());
+                robot.setEndX(position.getX());
+                robot.setStartY(position.getY());
+                robot.setEndY(position.getY());
             } catch (Exception e) {
                 e.printStackTrace();
             }

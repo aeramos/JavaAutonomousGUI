@@ -1,5 +1,7 @@
 package auto_gui.realtime;
 
+import auto_gui.api.Position;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,10 +18,11 @@ public class Server {
     private ServerSocket serverSocket;
     private Socket socket;
     private ObjectInputStream inputStream;
-    private int[] coordinates = new int[]{0, 0};
+    private Position position = new Position();
 
     private ScheduledExecutorService scheduledExecutorService;
 
+    private boolean noMoreData = false;
     private boolean closed = false;
 
     public Server() throws IOException {
@@ -29,14 +32,22 @@ public class Server {
         scheduledExecutorService.scheduleAtFixedRate(() -> {
             // check data sent to server
             try {
-                coordinates = (int[])inputStream.readObject();
+                Position oldPosition = position;
+                position = (Position)inputStream.readObject();
+                if (oldPosition != position) {
+                    System.out.println("New coordinate value: " + position);
+                }
+                noMoreData = false;
             } catch (SocketException | NullPointerException e) {
                 if (!closed) {
                     System.out.println("Socket connection closed, reopening...");
                     connect();
                 }
             } catch (EOFException e) {
-                System.out.println("No more data to read from socket");
+                if (!noMoreData) {
+                    noMoreData = true;
+                    System.out.println("No more data to read from socket");
+                }
             } catch (ClassCastException e) {
                 System.out.println("Error - the data is not of type: int[]");
             } catch (Exception | Error e) {
@@ -72,8 +83,8 @@ public class Server {
         }
     }
 
-    public int[] getCoordinates() {
-        return coordinates;
+    public Position getPosition() {
+        return position;
     }
 
     public boolean isClosed() {
