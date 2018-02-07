@@ -20,15 +20,15 @@
         </rowConstraints>
         <MenuBar GridPane.valignment="TOP">
             <Menu mnemonicParsing="false" text="File">
-                <Menu fx:id="openPath" mnemonicParsing="false" text="Open path..." />
-                <Menu fx:id="savePath" mnemonicParsing="false" text="Save path">
+                <Menu fx:id="openAutonomousRoutine" mnemonicParsing="false" text="Open path..." />
+                <Menu fx:id="saveAutonomousRoutine" mnemonicParsing="false" text="Save path">
                     <MenuItem id="close" mnemonicParsing="false">
                         <graphic>
                             <Text text="Close" />
                         </graphic>
                     </MenuItem>
                 </Menu>
-                <Menu fx:id="deletePath" mnemonicParsing="false" text="Delete path">
+                <Menu fx:id="deleteAutonomousRoutine" mnemonicParsing="false" text="Delete path">
                     <MenuItem id="close" mnemonicParsing="false">
                         <graphic>
                             <Text text="Close" />
@@ -50,7 +50,7 @@
                 <Insets left="5.0" />
             </GridPane.margin>
         </Text>
-        <TextField fx:id="pathNumber" disable="true" editable="false" maxHeight="1.7976931348623157E308"
+        <TextField fx:id="autonomousRoutineNumber" disable="true" editable="false" maxHeight="1.7976931348623157E308"
                    maxWidth="100.0" text="No path" GridPane.halignment="LEFT" GridPane.hgrow="NEVER"
                    GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
             <GridPane.margin>
@@ -63,7 +63,7 @@
                 <Insets left="155.0" />
             </GridPane.margin>
         </Text>
-        <TextField fx:id="currentPath" disable="true" editable="false" maxHeight="1.7976931348623157E308"
+        <TextField fx:id="currentAutonomousRoutine" disable="true" editable="false" maxHeight="1.7976931348623157E308"
                    maxWidth="100.0" text="No path" GridPane.halignment="LEFT" GridPane.rowIndex="2"
                    GridPane.valignment="CENTER">
             <GridPane.margin>

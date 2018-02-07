@@ -1,6 +1,6 @@
 package auto_gui;
 
-import auto_gui.api.Path;
+import auto_gui.api.AutonomousRoutine;
 import auto_gui.api.Position;
 import auto_gui.realtime.Server;
 import javafx.fxml.FXML;
@@ -28,23 +28,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 class Controller extends Pane {
-    private ArrayList<Path> paths = new ArrayList<>();
+    private ArrayList<AutonomousRoutine> autonomousRoutines = new ArrayList<>();
     private ArrayList<ArrayList<Line>> lines = new ArrayList<>();
 
     @FXML
     private ImageView imageContainer;
     @FXML
-    private Menu savePath, deletePath;
+    private Menu saveAutonomousRoutine, deleteAutonomousRoutine;
     @FXML
-    private MenuItem openPath, about;
+    private MenuItem openAutonomousRoutine, about;
     @FXML
-    private TextField pathNumber, currentPath, numberOfPoints, minimumLineLength;
+    private TextField autonomousRoutineNumber, currentAutonomousRoutine, numberOfPoints, minimumLineLength;
     @FXML
     private Text minimumLineLengthLabel;
     @FXML
     private ChoiceBox drawMode;
 
-    private boolean isCreatingPath = false;
+    private boolean isCreatingAutonomousRoutine = false;
 
     private Server server;
     private Line robot;
@@ -87,23 +87,23 @@ class Controller extends Pane {
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
 
-        openPath.setOnAction(event -> {
+        openAutonomousRoutine.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open path");
+            fileChooser.setTitle("Open autonomousRoutine");
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             File file = fileChooser.showOpenDialog(new Stage());
             if (file != null) {
                 try {
-                    Path path = new Path(file);
-                    paths.add(path);
-                    lines.add(getLines(paths.get(paths.size() - 1)));
-                    addPathsToMenus();
-                    System.out.println("Loaded path from " + file);
+                    AutonomousRoutine autonomousRoutine = new AutonomousRoutine(file);
+                    autonomousRoutines.add(autonomousRoutine);
+                    lines.add(getLines(autonomousRoutines.get(autonomousRoutines.size() - 1)));
+                    addAutonomousRoutinesToMenus();
+                    System.out.println("Loaded autonomousRoutine from " + file);
                 } catch (IOException e) {
-                    System.out.println("Error loading path from " + file);
+                    System.out.println("Error loading autonomousRoutine from " + file);
                 }
             } else {
-                System.out.println("Error loading path: file not found");
+                System.out.println("Error loading autonomousRoutine: file not found");
             }
         });
 
@@ -141,7 +141,7 @@ class Controller extends Pane {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("About the SciBorgs Java Autonomous GUI");
             alert.setHeaderText("SciBorgs Java Autonomous GUI\nVersion " + version);
-            alert.setContentText("The SciBorgs Java Autonomous GUI is a GUI for path generation. These paths will be followed by our " +
+            alert.setContentText("The SciBorgs Java Autonomous GUI is a GUI for autonomousRoutine generation. These autonomousRoutines will be followed by our " +
                     "robot during the Autonomous Period in the FIRST Robotics Competition.\n\n" +
                     "It also has the capability to get realtime coordinates of the robot while it drives and represent these on the map.\n\n" +
                     "It mas made by Alejandro Ramos (aeramos on GitHub) for the SciBorgs robotics team (Team 1155)");
@@ -155,73 +155,73 @@ class Controller extends Pane {
         });
     }
 
-    private ArrayList<Line> getLines(Path path) {
+    private ArrayList<Line> getLines(AutonomousRoutine autonomousRoutine) {
         ArrayList<Line> lines = new ArrayList<>();
-        for (int i = 0; i < path.size() - 1; i++) {
-            lines.add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(path.get(i)[0]).startY(path.get(i)[1]).endX(path.get(i)[0]).endY(path.get(i)[1]).build());
-            lines.add(LineBuilder.create().strokeWidth(2f).stroke(Color.BLACK).startX(path.get(i)[0]).startY(path.get(i)[1]).endX(path.get(i + 1)[0]).endY(path.get(i + 1)[1]).build());
+        for (int i = 0; i < autonomousRoutine.size() - 1; i++) {
+            lines.add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(autonomousRoutine.getCoordinate(i)[0]).startY(autonomousRoutine.getCoordinate(i)[1]).endX(autonomousRoutine.getCoordinate(i)[0]).endY(autonomousRoutine.getCoordinate(i)[1]).build());
+            lines.add(LineBuilder.create().strokeWidth(2f).stroke(Color.BLACK).startX(autonomousRoutine.getCoordinate(i)[0]).startY(autonomousRoutine.getCoordinate(i)[1]).endX(autonomousRoutine.getCoordinate(i + 1)[0]).endY(autonomousRoutine.getCoordinate(i + 1)[1]).build());
             getChildren().add(lines.get(lines.size() - 2));
             getChildren().add(lines.get(lines.size() - 1));
         }
-        lines.add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(path.getLast()[0]).startY(path.getLast()[1]).endX(path.getLast()[0]).endY(path.getLast()[1]).build());
+        lines.add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(autonomousRoutine.getLastCoordinate()[0]).startY(autonomousRoutine.getLastCoordinate()[1]).endX(autonomousRoutine.getLastCoordinate()[0]).endY(autonomousRoutine.getLastCoordinate()[1]).build());
         getChildren().add(lines.get(lines.size() - 1));
         return lines;
     }
 
-    private void addPathsToMenus() {
-        addPathsToMenu(savePath, true);
-        addPathsToMenu(deletePath, false);
+    private void addAutonomousRoutinesToMenus() {
+        addAutonomousRoutinesToMenu(saveAutonomousRoutine, true);
+        addAutonomousRoutinesToMenu(deleteAutonomousRoutine, false);
     }
 
-    private void addPathsToMenu(Menu menu, boolean isSaveMenu) {
+    private void addAutonomousRoutinesToMenu(Menu menu, boolean isSaveMenu) {
         menu.getItems().clear();
         menu.getItems().add(new MenuItem("", new Text("Close")));
         if (!isSaveMenu) {
-            Text text = new Text("Delete all paths");
-            setPathColorOnTextMouseover(text, lines);
+            Text text = new Text("Delete all autonomousRoutines");
+            setAutonomousRoutineColorOnTextMouseover(text, lines);
             menu.getItems().add(new MenuItem("", text));
-            // when "Delete all paths" is selected, delete all paths
+            // when "Delete all autonomousRoutines" is selected, delete all autonomousRoutines
             ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
-                isCreatingPath = false;
+                isCreatingAutonomousRoutine = false;
                 for (ArrayList<Line> lines : lines) {
                     for (Line line : lines) {
                         getChildren().remove(line);
                     }
                 }
                 lines.clear();
-                paths.clear();
-                addPathsToMenu(savePath, true);
-                addPathsToMenu(deletePath, false);
+                autonomousRoutines.clear();
+                addAutonomousRoutinesToMenu(saveAutonomousRoutine, true);
+                addAutonomousRoutinesToMenu(deleteAutonomousRoutine, false);
             });
         }
-        for (int i = 0; i < paths.size(); i++) {
-            Text text = new Text("Path " + (i + 1));
-            setPathColorOnTextMouseover(text, lines.get(i).toArray(new Line[0]));
+        for (int i = 0; i < autonomousRoutines.size(); i++) {
+            Text text = new Text("AutonomousRoutine " + (i + 1));
+            setAutonomousRoutineColorOnTextMouseover(text, lines.get(i).toArray(new Line[0]));
             menu.getItems().add(new MenuItem("", text));
             final int j = i;
             ((MenuItem)getLastInList(menu.getItems())).setOnAction(event -> {
                 if (isSaveMenu) {
                     FileChooser fileChooser = new FileChooser();
-                    fileChooser.setTitle("Save Path");
+                    fileChooser.setTitle("Save AutonomousRoutine");
                     fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
                     File file = fileChooser.showSaveDialog(new Stage());
                     if (file != null) {
-                        if (paths.get(j).save(file)) {
-                            System.out.println("Saved path to " + file);
+                        if (autonomousRoutines.get(j).save(file)) {
+                            System.out.println("Saved autonomousRoutine to " + file);
                         } else {
-                            System.out.println("Error saving path to " + file);
+                            System.out.println("Error saving autonomousRoutine to " + file);
                         }
                     } else {
-                        System.out.println("Error saving path: file not found");
+                        System.out.println("Error saving autonomousRoutine: file not found");
                     }
                 } else {
                     for (Line line : lines.get(j)) {
                         getChildren().remove(line);
                     }
                     lines.remove(j);
-                    paths.remove(j);
-                    addPathsToMenu(savePath, true);
-                    addPathsToMenu(deletePath, false);
+                    autonomousRoutines.remove(j);
+                    addAutonomousRoutinesToMenu(saveAutonomousRoutine, true);
+                    addAutonomousRoutinesToMenu(deleteAutonomousRoutine, false);
                 }
             });
         }
@@ -231,8 +231,8 @@ class Controller extends Pane {
         return list.get(list.size() - 1);
     }
 
-    // when the mouse goes over the text, the path becomes red, when the mouse leaves, the path goes back to black
-    private void setPathColorOnTextMouseover(Text text, ArrayList<ArrayList<Line>> listOfLines) {
+    // when the mouse goes over the text, the autonomousRoutine becomes red, when the mouse leaves, the autonomousRoutine goes back to black
+    private void setAutonomousRoutineColorOnTextMouseover(Text text, ArrayList<ArrayList<Line>> listOfLines) {
         text.setOnMouseEntered(event -> {
             for (ArrayList<Line> lines : listOfLines) {
                 for (Line line : lines) {
@@ -251,7 +251,7 @@ class Controller extends Pane {
         });
     }
 
-    private void setPathColorOnTextMouseover(Text text, Line[] lines) {
+    private void setAutonomousRoutineColorOnTextMouseover(Text text, Line[] lines) {
         text.setOnMouseEntered(event -> {
             for (Line line : lines) {
                 line.toFront();
@@ -267,13 +267,13 @@ class Controller extends Pane {
     }
 
     private void startLine(MouseEvent event) {
-        if (!isCreatingPath) {
-            paths.add(new Path());
+        if (!isCreatingAutonomousRoutine) {
+            autonomousRoutines.add(new AutonomousRoutine());
             lines.add(new ArrayList<>());
 
-            pathNumber.setText(String.valueOf(paths.size()));
+            autonomousRoutineNumber.setText(String.valueOf(autonomousRoutines.size()));
         }
-        paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
+        autonomousRoutines.get(autonomousRoutines.size() - 1).add((int)event.getX(), (int)event.getY(), null);
 
         // add the dot and the line
         lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
@@ -283,7 +283,7 @@ class Controller extends Pane {
         getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 2));
         getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
 
-        isCreatingPath = true;
+        isCreatingAutonomousRoutine = true;
     }
 
     private void setMode(Boolean clickMode) {
@@ -325,23 +325,23 @@ class Controller extends Pane {
                     if (isInNode(event.getX(), event.getY(), imageContainer)) {
                         if (event.getButton() == MouseButton.PRIMARY) {
                             startLine(event);
-                        } else if (event.getButton() == MouseButton.SECONDARY && isCreatingPath) {
-                            paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
+                        } else if (event.getButton() == MouseButton.SECONDARY && isCreatingAutonomousRoutine) {
+                            autonomousRoutines.get(autonomousRoutines.size() - 1).add((int)event.getX(), (int)event.getY(), null);
                             lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
                             getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
-                            isCreatingPath = false;
-                            addPathsToMenus();
+                            isCreatingAutonomousRoutine = false;
+                            addAutonomousRoutinesToMenus();
                         }
-                        currentPath.setText(String.valueOf(Math.round(paths.get(paths.size() - 1).getLength() * 100f) / 100f));
-                        numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
+                        currentAutonomousRoutine.setText(String.valueOf(Math.round(autonomousRoutines.get(autonomousRoutines.size() - 1).getLength() * 100f) / 100f));
+                        numberOfPoints.setText(String.valueOf(autonomousRoutines.get(autonomousRoutines.size() - 1).size()));
                     }
                 });
 
                 setOnMouseMoved(event -> {
-                    if (isInNode(event.getX(), event.getY(), imageContainer) && isCreatingPath) {
+                    if (isInNode(event.getX(), event.getY(), imageContainer) && isCreatingAutonomousRoutine) {
                         getChildren().remove(getChildren().size() - 1);
                         lines.get(lines.size() - 1).remove(lines.get(lines.size() - 1).size() - 1);
-                        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(2f).startX(paths.get(paths.size() - 1).getLast()[0]).startY(paths.get(paths.size() - 1).getLast()[1]).endX(event.getX()).endY(event.getY()).build());
+                        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(2f).startX(autonomousRoutines.get(autonomousRoutines.size() - 1).getLastCoordinate()[0]).startY(autonomousRoutines.get(autonomousRoutines.size() - 1).getLastCoordinate()[1]).endX(event.getX()).endY(event.getY()).build());
                         getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
                     }
                 });
@@ -364,15 +364,15 @@ class Controller extends Pane {
                 });
 
                 setOnMouseDragged(event -> {
-                    if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY && isCreatingPath) {
+                    if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY && isCreatingAutonomousRoutine) {
                         Line line = lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1);
                         line.setEndX(event.getX());
                         line.setEndY(event.getY());
 
                         // add a new point. if the point is less than the minimum distance away from the last one, remove it and wait until the distance is long enough
-                        paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
-                        if (paths.get(paths.size() - 1).getDistance(paths.get(paths.size() - 1).size() - 2, paths.get(paths.size() - 1).size() - 1) < Integer.parseInt(minimumLineLength.getText())) {
-                            paths.get(paths.size() - 1).remove(paths.get(paths.size() - 1).size() - 1);
+                        autonomousRoutines.get(autonomousRoutines.size() - 1).add((int)event.getX(), (int)event.getY(), null);
+                        if (autonomousRoutines.get(autonomousRoutines.size() - 1).getDistance(autonomousRoutines.get(autonomousRoutines.size() - 1).size() - 2, autonomousRoutines.get(autonomousRoutines.size() - 1).size() - 1) < Integer.parseInt(minimumLineLength.getText())) {
+                            autonomousRoutines.get(autonomousRoutines.size() - 1).remove(autonomousRoutines.get(autonomousRoutines.size() - 1).size() - 1);
                         } else {
                             // add the dot and the line
                             lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
@@ -382,16 +382,16 @@ class Controller extends Pane {
                             getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 2));
                             getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
 
-                            numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
-                            currentPath.setText(String.valueOf(Math.round(paths.get(paths.size() - 1).getLength() * 100f) / 100f));
+                            numberOfPoints.setText(String.valueOf(autonomousRoutines.get(autonomousRoutines.size() - 1).size()));
+                            currentAutonomousRoutine.setText(String.valueOf(Math.round(autonomousRoutines.get(autonomousRoutines.size() - 1).getLength() * 100f) / 100f));
                         }
                     }
                 });
 
                 setOnMouseReleased(event -> {
-                    if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY && isCreatingPath) {
-                        // the latest path
-                        paths.get(paths.size() - 1).add((int)event.getX(), (int)event.getY());
+                    if (isInNode(event.getX(), event.getY(), imageContainer) && event.getButton() == MouseButton.PRIMARY && isCreatingAutonomousRoutine) {
+                        // the latest autonomousRoutine
+                        autonomousRoutines.get(autonomousRoutines.size() - 1).add((int)event.getX(), (int)event.getY(), null);
                         Line line = lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1);
                         line.setEndX(event.getX());
                         line.setEndY(event.getY());
@@ -399,11 +399,11 @@ class Controller extends Pane {
                         lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
                         getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
 
-                        numberOfPoints.setText(String.valueOf(paths.get(paths.size() - 1).size()));
-                        currentPath.setText(String.valueOf(Math.round(paths.get(paths.size() - 1).getLength() * 100f) / 100f));
+                        numberOfPoints.setText(String.valueOf(autonomousRoutines.get(autonomousRoutines.size() - 1).size()));
+                        currentAutonomousRoutine.setText(String.valueOf(Math.round(autonomousRoutines.get(autonomousRoutines.size() - 1).getLength() * 100f) / 100f));
 
-                        isCreatingPath = false;
-                        addPathsToMenus();
+                        isCreatingAutonomousRoutine = false;
+                        addAutonomousRoutinesToMenus();
                     }
                 });
 
