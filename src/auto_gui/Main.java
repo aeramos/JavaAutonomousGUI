@@ -12,7 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        final String version = "0.2.2";
+        final String version = "0.3.0";
 
         Controller controller = new Controller(stage, version);
         stage.setTitle("SciBorgs Java Autonomous GUI - Version " + version);
