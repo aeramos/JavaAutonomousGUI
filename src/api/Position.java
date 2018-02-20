@@ -1,4 +1,4 @@
-package auto_gui.api;
+package api;
 
 public class Position {
     private double x;

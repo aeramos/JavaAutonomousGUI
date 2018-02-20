@@ -1,4 +1,4 @@
-package auto_gui.api;
+package api;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class AutonomousRoutine implements Serializable {
     private static final long serialVersionUID = 1;
-    private ArrayList<Integer> x = new ArrayList<>();
-    private ArrayList<Integer> y = new ArrayList<>();
+    private ArrayList<Double> x = new ArrayList<>();
+    private ArrayList<Double> y = new ArrayList<>();
     private ArrayList<AutonomousAction> autonomousActions = new ArrayList<>();
 
     public enum AutonomousAction {
@@ -44,7 +44,7 @@ public class AutonomousRoutine implements Serializable {
      * @param x the first x coordinate
      * @param y the first y coordinate
      */
-    public AutonomousRoutine(int x, int y, AutonomousAction autonomousAction) {
+    public AutonomousRoutine(double x, double y, AutonomousAction autonomousAction) {
         add(x, y, autonomousAction);
     }
 
@@ -53,7 +53,7 @@ public class AutonomousRoutine implements Serializable {
      *
      * @param xy a coordinate array in which xy[0] has the x coordinates and xy[1] has the y coordinates
      */
-    public AutonomousRoutine(int[][] xy, AutonomousAction[] autonomousAction) {
+    public AutonomousRoutine(double[][] xy, AutonomousAction[] autonomousAction) {
         add(xy, autonomousAction);
     }
 
@@ -113,7 +113,7 @@ public class AutonomousRoutine implements Serializable {
      * @param x the x coordinate value
      * @param y the y coordinate value
      */
-    public void add(int x, int y, AutonomousAction autonomousAction) {
+    public void add(double x, double y, AutonomousAction autonomousAction) {
         this.x.add(x);
         this.y.add(y);
         this.autonomousActions.add(autonomousAction);
@@ -124,7 +124,7 @@ public class AutonomousRoutine implements Serializable {
      *
      * @param xy a coordinate array in which xy[0] has the x coordinates and xy[1] has the y coordinates
      */
-    public void add(int[][] xy, AutonomousAction[] autonomousAction) {
+    public void add(double[][] xy, AutonomousAction[] autonomousAction) {
         for (int i = 0; i < xy.length; i++) {
             this.add(xy[i][0], xy[i][1], autonomousAction[i]);
         }
@@ -138,15 +138,15 @@ public class AutonomousRoutine implements Serializable {
      * @param index the index of the coordinate to getCoordinate
      * @return a <code>int[]</code> coordinate value in which [0] is the x value and [1] is the y value
      */
-    public int[] getCoordinate(int index) {
+    public double[] getCoordinate(int index) {
         if (index < x.size() && index >= 0) {
-            return new int[]{x.get(index), y.get(index)};
+            return new double[]{x.get(index), y.get(index)};
         } else {
             return null;
         }
     }
 
-    public int[] getLastCoordinate() {
+    public double[] getLastCoordinate() {
         if (this.size() > 0) {
             return getCoordinate(this.size() - 1);
         } else {
@@ -225,10 +225,12 @@ public class AutonomousRoutine implements Serializable {
                 autonomousRoutine = (AutonomousRoutine)new ObjectInputStream(new FileInputStream(file)).readObject();
                 this.set(autonomousRoutine);
             } catch (Exception e) {
+                System.out.println("could not cast");
                 return false;
             }
             return true;
         } else {
+            System.out.println("File is null");
             return false;
         }
     }

@@ -1,6 +1,6 @@
-package auto_gui.realtime;
+package api.realtime;
 
-import auto_gui.api.Position;
+import api.Position;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

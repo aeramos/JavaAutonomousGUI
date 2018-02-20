@@ -1,8 +1,8 @@
 package auto_gui;
 
-import auto_gui.api.AutonomousRoutine;
-import auto_gui.api.Position;
-import auto_gui.realtime.Server;
+import api.AutonomousRoutine;
+import api.Position;
+import api.realtime.Server;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -145,7 +145,7 @@ class Controller extends Pane {
                     "robot during the Autonomous Period in the FIRST Robotics Competition.\n\n" +
                     "It also has the capability to get realtime coordinates of the robot while it drives and represent these on the map.\n\n" +
                     "It mas made by Alejandro Ramos (aeramos on GitHub) for the SciBorgs robotics team (Team 1155)");
-            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("auto_gui/resources/SciBorgs.png"));
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("api/resources/SciBorgs.png"));
             alert.showAndWait();
         });
 

@@ -18,7 +18,7 @@ public class Main extends Application {
         stage.setTitle("SciBorgs Java Autonomous GUI - Version " + version);
         stage.setScene(new Scene(controller));
         stage.setResizable(false);
-        stage.getIcons().add(new Image("auto_gui/resources/SciBorgs.png"));
+        stage.getIcons().add(new Image("api/resources/SciBorgs.png"));
         stage.toFront();
         stage.show();
     }
