@@ -89,7 +89,7 @@ class Controller extends Pane {
 
         openAutonomousRoutine.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open autonomousRoutine");
+            fileChooser.setTitle("Open Autonomous Routine");
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             File file = fileChooser.showOpenDialog(new Stage());
             if (file != null) {
@@ -98,12 +98,12 @@ class Controller extends Pane {
                     autonomousRoutines.add(autonomousRoutine);
                     lines.add(getLines(autonomousRoutines.get(autonomousRoutines.size() - 1)));
                     addAutonomousRoutinesToMenus();
-                    System.out.println("Loaded autonomousRoutine from " + file);
+                    System.out.println("Loaded Autonomous Routine from " + file);
                 } catch (IOException e) {
-                    System.out.println("Error loading autonomousRoutine from " + file);
+                    System.out.println("Error loading Autonomous Routine from " + file);
                 }
             } else {
-                System.out.println("Error loading autonomousRoutine: file not found");
+                System.out.println("Error loading Autonomous Routine: file not found");
             }
         });
 
@@ -141,7 +141,7 @@ class Controller extends Pane {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("About the SciBorgs Java Autonomous GUI");
             alert.setHeaderText("SciBorgs Java Autonomous GUI\nVersion " + version);
-            alert.setContentText("The SciBorgs Java Autonomous GUI is a GUI for autonomousRoutine generation. These autonomousRoutines will be followed by our " +
+            alert.setContentText("The SciBorgs Java Autonomous GUI is a GUI for Autonomous Routine generation. These Autonomous Routines will be followed by our " +
                     "robot during the Autonomous Period in the FIRST Robotics Competition.\n\n" +
                     "It also has the capability to get realtime coordinates of the robot while it drives and represent these on the map.\n\n" +
                     "It mas made by Alejandro Ramos (aeramos on GitHub) for the SciBorgs robotics team (Team 1155)");
@@ -177,7 +177,7 @@ class Controller extends Pane {
         menu.getItems().clear();
         menu.getItems().add(new MenuItem("", new Text("Close")));
         if (!isSaveMenu) {
-            Text text = new Text("Delete all autonomousRoutines");
+            Text text = new Text("Delete all Autonomous Routines");
             setAutonomousRoutineColorOnTextMouseover(text, lines);
             menu.getItems().add(new MenuItem("", text));
             // when "Delete all autonomousRoutines" is selected, delete all autonomousRoutines
@@ -195,7 +195,7 @@ class Controller extends Pane {
             });
         }
         for (int i = 0; i < autonomousRoutines.size(); i++) {
-            Text text = new Text("AutonomousRoutine " + (i + 1));
+            Text text = new Text("Autonomous Routine " + (i + 1));
             setAutonomousRoutineColorOnTextMouseover(text, lines.get(i).toArray(new Line[0]));
             menu.getItems().add(new MenuItem("", text));
             final int j = i;
@@ -207,12 +207,12 @@ class Controller extends Pane {
                     File file = fileChooser.showSaveDialog(new Stage());
                     if (file != null) {
                         if (autonomousRoutines.get(j).save(file)) {
-                            System.out.println("Saved autonomousRoutine to " + file);
+                            System.out.println("Saved Autonomous Routine to " + file);
                         } else {
-                            System.out.println("Error saving autonomousRoutine to " + file);
+                            System.out.println("Error saving Autonomous Routine to " + file);
                         }
                     } else {
-                        System.out.println("Error saving autonomousRoutine: file not found");
+                        System.out.println("Error saving Autonomous Routine: file not found");
                     }
                 } else {
                     for (Line line : lines.get(j)) {
@@ -276,12 +276,12 @@ class Controller extends Pane {
         autonomousRoutines.get(autonomousRoutines.size() - 1).add((int)event.getX(), (int)event.getY(), null);
 
         // add the dot and the line
-        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
         lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(2f).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
+        lines.get(lines.size() - 1).add(LineBuilder.create().strokeWidth(5f).stroke(Color.BLACK).startX(event.getX()).startY(event.getY()).endX(event.getX()).endY(event.getY()).build());
 
         //add them to the pane
-        getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 2));
         getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1));
+        getChildren().add(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 2));
 
         isCreatingAutonomousRoutine = true;
     }
@@ -321,7 +321,7 @@ class Controller extends Pane {
                 setOnMouseReleased(event -> {
                 });
 
-                setOnMouseClicked((MouseEvent event) -> {
+                setOnMouseClicked(event -> {
                     if (isInNode(event.getX(), event.getY(), imageContainer)) {
                         if (event.getButton() == MouseButton.PRIMARY) {
                             startLine(event);
@@ -332,6 +332,32 @@ class Controller extends Pane {
                             isCreatingAutonomousRoutine = false;
                             addAutonomousRoutinesToMenus();
                         }
+                        // add mouse listener to last line (dot)
+                        ContextMenu menu = new ContextMenu();
+                        AutonomousRoutine autonomousRoutine = autonomousRoutines.get(autonomousRoutines.size() - 1);
+                        int index = autonomousRoutines.size() -1;
+                        Line point = lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1);
+                        point.setOnMouseClicked(event1 -> {
+                            if (event1.getButton() == MouseButton.SECONDARY) {
+                                MenuItem none = new MenuItem("None");
+                                none.setOnAction((menuEvent) -> {
+                                    point.setStroke(Color.BLACK);
+                                    autonomousRoutine.setAutonomousAction(index, null);
+                                });
+                                menu.getItems().add(none);
+
+                                AutonomousRoutine.AutonomousAction actions[] = AutonomousRoutine.AutonomousAction.values();
+                                for (AutonomousRoutine.AutonomousAction action : actions) {
+                                    MenuItem menuItem = new MenuItem(action.toString());
+                                    menuItem.setOnAction((menuEvent) -> {
+                                        point.setStroke(Color.RED);
+                                        autonomousRoutine.setAutonomousAction(index, action);
+                                    });
+                                    menu.getItems().add(menuItem);
+                                }
+                                menu.show(lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1), event.getScreenX(), event.getScreenY());
+                            }
+                        });
                         currentAutonomousRoutine.setText(String.valueOf(Math.round(autonomousRoutines.get(autonomousRoutines.size() - 1).getLength() * 100f) / 100f));
                         numberOfPoints.setText(String.valueOf(autonomousRoutines.get(autonomousRoutines.size() - 1).size()));
                     }

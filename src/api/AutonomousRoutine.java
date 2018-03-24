@@ -166,6 +166,10 @@ public class AutonomousRoutine implements Serializable {
         return autonomousActions.get(index) != null;
     }
 
+    public void setAutonomousAction(int index, AutonomousAction action) {
+        autonomousActions.set(index, action);
+    }
+
     /**
      * Removes the coordinate at the specified index.
      *
