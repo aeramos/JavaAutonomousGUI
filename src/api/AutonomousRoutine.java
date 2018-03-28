@@ -107,6 +107,19 @@ public class AutonomousRoutine implements Serializable {
         return xString + "],\n" + "     " + yString + "]}";
     }
 
+    public void printGenerator() {
+        for (int i = 0; i < size(); i++) {
+            double[] coordinate = getCoordinate(i);
+            System.out.print("path.add(" + (coordinate[0] / 24) + ", " + (coordinate[1] / 24) + ", ");
+            if (getAutonomousAction(i) != null) {
+                System.out.print("AutonomousRoutine.AutonomousAction." + getAutonomousAction(i).toString());
+            } else {
+                System.out.print("null");
+            }
+            System.out.println(");");
+        }
+    }
+
     /**
      * Adds the given coordinate to this AutonomousRoutine.
      *

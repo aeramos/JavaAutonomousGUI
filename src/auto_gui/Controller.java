@@ -339,12 +339,17 @@ class Controller extends Pane {
                         Line point = lines.get(lines.size() - 1).get(lines.get(lines.size() - 1).size() - 1);
                         point.setOnMouseClicked(event1 -> {
                             if (event1.getButton() == MouseButton.SECONDARY) {
+                                MenuItem printGenerator = new MenuItem("Print Generator");
+                                printGenerator.setOnAction((menuEvent) -> {
+                                    autonomousRoutine.printGenerator();
+                                });
+
                                 MenuItem none = new MenuItem("None");
                                 none.setOnAction((menuEvent) -> {
                                     point.setStroke(Color.BLACK);
                                     autonomousRoutine.setAutonomousAction(index, null);
                                 });
-                                menu.getItems().add(none);
+                                menu.getItems().addAll(printGenerator, none);
 
                                 AutonomousRoutine.AutonomousAction actions[] = AutonomousRoutine.AutonomousAction.values();
                                 for (AutonomousRoutine.AutonomousAction action : actions) {
